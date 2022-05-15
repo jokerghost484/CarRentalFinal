@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,15 +19,7 @@
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://kit.fontawesome.com/e63db42066.js" crossorigin="anonymous"></script>
 
-  <script>
-
-    function show(shown, hidden) {
-      // Yapabilirsem fonksiyonu düzenlicem ama şu an bir takım zorluklar yaşıyorum.
-      var Page1 = document.getElementById(shown).style.display = 'block';
-      var Page2 = document.getElementById(hidden).style.display = 'none';
-      return false
-    }
-  </script>
+ 
 </head>
 
 <body>

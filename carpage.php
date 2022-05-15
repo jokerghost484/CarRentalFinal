@@ -80,9 +80,9 @@ if (!isset($_SESSION)) {
         $data = htmlspecialchars($data);
         return $data;
     }
-
-
-    $sql = "SELECT * FROM cartable ";
+    $pick = $_SESSION["pickupday"];
+    $drop = $_SESSION["dropoffday"];
+    $sql = "SELECT * FROM cartable WHERE CarID NOT IN (SELECT CarID From reservationtable WHERE Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  ) ";
     $result = $conn->query($sql);
 
 
@@ -122,34 +122,34 @@ if (!isset($_SESSION)) {
                   <div class="card-body">
                       <h5 class="card-title"> Features of Car</h5>
                       <ul class="list-group list-group-flush">
-                          <li class="list-group-item">
+                          <li class="list-group-item" style="text-align: left;">
                               <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
                               ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
                               inventore maiores.
                           </li>
-                          <li class="list-group-item">
+                          <li class="list-group-item" style="text-align: left;">
                               <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
                               ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
                           </li>
-                          <li class="list-group-item">
+                          <li class="list-group-item" style="text-align: left;">
                               <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
                               ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
                           </li>
-                          <li class="list-group-item">
+                          <li class="list-group-item" style="text-align: left;" >
                               <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
                               ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
                           </li>
-                          <li class="list-group-item">
+                          <li class="list-group-item" style="text-align: left;">
                               <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
                               ipsum dolor sit amet.
                           </li>
-                          <li class="list-group-item">
+                          <li class="list-group-item" style="text-align: left;">
                               <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
                               ipsum.
-                          </li>';
+                          </li>
 
 
-            echo '
+            
                             <div class="form-chec mt-3 ml-4">
              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value = "' . $row["CarID"] . '">
              <label class="form-check-label" for="flexRadioDefault1">

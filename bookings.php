@@ -43,7 +43,7 @@ if (!isset($_SESSION)) {
   $kaan = FALSE;
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-      $carid = test_input($_POST['flexRadioDefault']);
+      
       if (isset($_POST['deletebutton'])) {
           $kaan = TRUE;
           $reservationid = $_POST['flexRadioDefault'];

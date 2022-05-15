@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,25 +25,84 @@
 <?php include("navbaradmin.php"); ?>
 
 
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" style="font-family: Merriweather, serif" id="exampleModalLabel">Update Car</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" style="font-family: Merriweather, serif">
-          Are you sure about this? You are going update this car features. Please make sure you enter the every feature
-          of this car otherwise you have to do this process all over again.
-        </div>
-        <div class="modal-footer" style="font-family: Merriweather, serif">
+<?php
 
-          <a class="btn btn-outline-danger" href="admin.php">Yes</a>
-          <a class="btn btn-outline-info" href="updatecar.php">No</a>
-        </div>
-      </div>
-    </div>
-  </div>
+$servername = "localhost";
+$username = "root";
+$password = "password";
+$dbname = "carweb";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, null, $dbname);
+// Check connection
+if (!$conn) {
+  die("Connection failed: " . mysqli_connect_error());
+}
+
+?>
+
+<?php 
+
+$carid =  "";
+  $caridErr  ="";
+  
+
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kaan = TRUE;
+
+    if (empty($_POST["carid"])) {
+      $caridErr = "CarID is required";
+      $kaan = FALSE;
+    } else {
+      $carid = test_input($_POST["carid"]);
+    }
+
+    if(isset($_POST["submit"])){
+
+
+      if(!empty($_FILES["image"]["carid"])){
+        // Get file info 
+        $fileName = basename($_FILES["image"]["name"]); 
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        // Allow certain file formats 
+        $allowTypes = array('jpg','png','jpeg','gif'); 
+
+        if(in_array($fileType, $allowTypes)){
+          $image = $_FILES['image']['tmp_name']; 
+            $imgContent = addslashes(file_get_contents($image));
+
+            // Insert image content into database 
+            $insert = $db->query("UPDATE cartable SET Carimmage VALUES ('$imgContent') WHERE CarID = $carid"); 
+        }
+      }
+      /*if ($kaan == TRUE) {
+        $sql ="INSERT INTO cartable (Carimage) VALUES ('') WHERE carid = '$carid";
+       
+  
+        
+      }*/
+    }
+    
+
+    if ($kaan == TRUE) {
+      echo "<script> location.href='admin.php'; </script>";
+    }
+  }
+
+
+
+  function test_input($data)
+  {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }
+
+  ?>
+?>
 
 
   <div class="container mt-5">
@@ -45,21 +110,25 @@
       <div class="col">
 
       </div>
-      <div class="col-10">
-        <div class="mb-3">
-          <label for="exampleCarID5" class="form-label">CarID</label>
-          <input type="email" class="form-control" id="exampleCarID5" placeholder="XXXXXXX">
+      <div class="col-9">
+      <form action="admin.php" method="post" enctype="multipart/form-data">
+      <div class="card" style="width: 18rem;">
+        
+        <img src="images/No-Image-Found-400x264.png" class="card-img-top" alt="honda">
+        <div class="card-body">
+          <p class="card-text">Please add a car image about car you are going to add. </p>
+          <div class="col" style="text-align: left;">
+            <label for="inputCarName" class="form-label">Car ID</label>
+            <input type="name" class="form-control" id="carname" name="carname"  value="<?php echo isset($_POST["carname"]) ? $_POST["carname"] : ''; ?>">
+          </div>
         </div>
-        <div class="mb-3 mt-5">
-          <label for="exampleComment" class="form-label">Features of Car</label>
-          <textarea class="form-control" id="exampleComment" rows="3" aria-describedby="featureAttention"></textarea>
-          <div id="featureAttention" class="form-text">Please add features in substance.Otherwise it will be mess.</div>
-        </div>
-        <div class="button56 mt-5 " style="text-align: right;">
-          <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Update
-            Car</a>
-        </div>
+        <label>Select Image File:</label>
+      <input type="file" name="image">
+      <input type="submit" name="submit" value="Upload">
+
       </div>
+      
+    </form>
       <div class="col">
 
       </div>

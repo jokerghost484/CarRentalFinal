@@ -1,3 +1,8 @@
+<?php
+if (!isset($_SESSION)) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,6 +22,61 @@
 
 <body>
 <?php include("navbaradmin.php"); ?>
+
+
+
+
+    <?php
+
+    $servername = "localhost";
+    $username = "root";
+    $password = "password";
+    $dbname = "carweb";
+
+    // Create connection
+    $conn = mysqli_connect($servername, $username, null, $dbname);
+    // Check connection
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    ?>
+
+
+
+<?php
+
+
+    $kaan = FALSE;
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $carid = test_input($_POST['flexRadioDefault']);
+        if (isset($_POST['cardelete'])) {
+            $kaan = TRUE;
+            
+            $carid = $_POST['flexRadioDefault'];
+            $sql = "DELETE FROM cartable WHERE CarID ='$carid'";
+        }
+        if ($conn->query($sql) === TRUE) {
+            if($kaan==TRUE){
+              echo "<script> location.href='deletecar.php'; </script>";
+            }
+            
+          }
+        
+    }
+
+    function test_input($data)
+    {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+
+
+    
+    ?>
 
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -39,357 +99,99 @@
         </div>
     </div>
 
-    <div class="container mt-5">
-        <div class="row ">
-            <div class="col-sm-4 mt-5">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
-                    <div class="card-body">
-                        <h5 class="card-title">Mercedes</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Automatic</li>
-                        <li class="list-group-item">Petrol</li>
-                        <li class="list-group-item">4 <i class="fa-solid fa-user"></i></li>
-                    </ul>
 
-                </div>
-            </div>
-            <div class="col-sm-8 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"> Features of Car</h5>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+
+
+        <?php
+        $sql = "SELECT * FROM cartable ";
+        $result = $conn->query($sql);
+    
+    
+    
+    
+        if ($result->num_rows == 0) {
+            $kaan = FALSE;
+        } else if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            
+            echo '<div class="container mt-5">
+            <div class="row ">
+                <div class="col-sm-4 mt-5">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
+                        <div class="card-body">
+                            <h5 class="card-title">' . $row["CarName"] . '</h5>
+                            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
+                        </div>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                                inventore maiores.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                                ipsum.
-                            </li>
-
-                            <a class="btn btn-outline-dark mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                href="#">Delete Car</a>
+                        <li class="list-group-item">' . $row["CarType"] . '</li>
+                        <li class="list-group-item">' . $row["Fuel"] . '</li>
+                        <li class="list-group-item">' . $row["Passenger"] . '   <i class="fa-solid fa-user"></i></li>
+                        
                         </ul>
+      
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="col-sm-8 mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"> Features of Car</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item" style="text-align: left;">
+                                    <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                                    ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
+                                    inventore maiores.
+                                </li>
+                                <li class="list-group-item" style="text-align: left;">
+                                    <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                                    ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
+                                </li>
+                                <li class="list-group-item" style="text-align: left;">
+                                    <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                                    ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
+                                </li>
+                                <li class="list-group-item" style="text-align: left;">
+                                    <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                                    ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
+                                </li>
+                                <li class="list-group-item" style="text-align: left;">
+                                    <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                                    ipsum dolor sit amet.
+                                </li>
+                                <li class="list-group-item" style="text-align: left;">
+                                    <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
+                                    ipsum.
+                                </li>
+      
+      
+                  
+                                  <div class="form-chec mt-3 ml-4">
+                   <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value = "' . $row["CarID"] . '">
+                   <label class="form-check-label" for="flexRadioDefault1">
+                     ' . $row["Price"] . '
+                   </label>
+                      </div>
+                                 
+                                  
+                                   
+                    
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>';
+            
+            
+        }
+    }
+    
+    ?>
+    <input type="submit" name="cardelete" value="DeleteCar">
+        </form>
 
-
-    <div class="container mt-5">
-        <div class="row ">
-            <div class="col-sm-4 mt-5">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/sports-car-background-hd-1920x1080-329208.jpg" class="card-img-top" alt="peugeot">
-                    <div class="card-body">
-                        <h5 class="card-title">Peugeot</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Automatic</li>
-                        <li class="list-group-item">Petrol</li>
-                        <li class="list-group-item">2 <i class="fa-solid fa-user"></i></li>
-                    </ul>
-
-                </div>
-            </div>
-            <div class="col-sm-8 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"> Features of Car</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                                inventore maiores.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                                ipsum.
-                            </li>
-
-                            <a class="btn btn-outline-dark mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                href="#">Delete Car</a>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="container mt-5">
-        <div class="row ">
-            <div class="col-sm-4 mt-5">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/range-rover-background-full-hd-1080p-162906.jpg" class="card-img-top"
-                        alt="range-rover">
-                    <div class="card-body">
-                        <h5 class="card-title">Range Rover</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Automatic</li>
-                        <li class="list-group-item">Petrol</li>
-                        <li class="list-group-item">6 <i class="fa-solid fa-user"></i></li>
-                    </ul>
-
-                </div>
-            </div>
-            <div class="col-sm-8 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"> Features of Car</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                                inventore maiores.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                                ipsum.
-                            </li>
-
-                            <a class="btn btn-outline-dark mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                href="#">Delete Car</a>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="container mt-5">
-        <div class="row ">
-            <div class="col-sm-4 mt-5">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/honda-wallpaper-hd-1080p-256995.jpg" class="card-img-top" alt="honda">
-                    <div class="card-body">
-                        <h5 class="card-title">Honda</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Automatic</li>
-                        <li class="list-group-item">Petrol</li>
-                        <li class="list-group-item">4 <i class="fa-solid fa-user"></i></li>
-                    </ul>
-
-                </div>
-            </div>
-            <div class="col-sm-8 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"> Features of Car</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                                inventore maiores.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                                ipsum.
-                            </li>
-
-                            <a class="btn btn-outline-dark mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                href="#">Delete Car</a>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="container mt-5">
-        <div class="row ">
-            <div class="col-sm-4 mt-5">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/ford-mustang-gt-2015-background-1080p-443589.jpg" class="card-img-top"
-                        alt="mustang">
-                    <div class="card-body">
-                        <h5 class="card-title">Mustang</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Automatic</li>
-                        <li class="list-group-item">Petrol</li>
-                        <li class="list-group-item">3 <i class="fa-solid fa-user"></i></li>
-                    </ul>
-
-                </div>
-            </div>
-            <div class="col-sm-8 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"> Features of Car</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                                inventore maiores.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                                ipsum.
-                            </li>
-
-                            <a class="btn btn-outline-dark mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                href="#">Delete Car</a>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="container mt-5">
-        <div class="row ">
-            <div class="col-sm-4 mt-5">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/kia-optima-wallpaper-1080p-194340.jpg" class="card-img-top" alt="kia">
-                    <div class="card-body">
-                        <h5 class="card-title">Kia</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Automatic</li>
-                        <li class="list-group-item">Petrol</li>
-                        <li class="list-group-item">4 <i class="fa-solid fa-user"></i></li>
-                    </ul>
-
-                </div>
-            </div>
-            <div class="col-sm-8 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"> Features of Car</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                                inventore maiores.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                                ipsum dolor sit amet.
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                                ipsum.
-                            </li>
-
-                            <a class="btn btn-outline-dark mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                href="#">Delete Car</a>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
+   
     <footer>
         <div class="footer">
             <footer>

@@ -25,19 +25,88 @@
 <body>
     <?php include("navbaradmin.php"); ?>
 
+
+    <?php
+
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "carweb";
+
+  // Create connection
+  $conn = mysqli_connect($servername, $username, null, $dbname);
+  // Check connection
+  if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+
+  ?>
+
+
+<?php 
+  $kaan = FALSE;
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      
+      if (isset($_POST['logoutadmin'])) {
+          $_SESSION["statusadmin"] = 0;
+          $kaan = TRUE;
+      }
+      if($kaan==TRUE){
+        echo "<script> location.href='index.php'; </script>";
+      }
+
+      
+      
+      
+  }
+
+  function test_input($data)
+  {
+      $data = trim($data);
+      $data = stripslashes($data);
+      $data = htmlspecialchars($data);
+      return $data;
+  }
+  
+  
+  
+  
+  ?>
+
     <div class="container mt-5">
         <div class="row">
             <div class="col-sm-4 mt-5">
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="card" style="width: 18rem;">
                     <img src="images/ghost3.jpg" class="card-img-top" alt="...">
                     <div class="card-header">
                         MyAccount
                     </div>
 
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><?php echo $_SESSION["managername"]  ?></li>
-                        <li class="list-group-item"><?php echo $_SESSION["position"]  ?></li>
-                    </ul>
+                    <?php
+            $managerid = $_SESSION['managerid'];
+            $sql = "SELECT * FROM managertable WHERE ManagerID='$managerid'";
+            $result = $conn->query($sql);
+
+
+
+
+
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+                echo '
+          
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item">'.$row["ManagerName"].'</li>
+                <li class="list-group-item">'.$row["ManagerPosition"].'</li>
+              </ul>'
+ ;
+              }
+            }
+
+
+            ?>
                     <div class="card-body">
                         <a class="btn btn-outline-dark " href="#">Edit Profile Picture</a>
                     </div>
@@ -45,9 +114,10 @@
                         <a class="btn btn-outline-dark " href="admincreate.php">Create Admin Profile</a>
                     </div>
                     <div class="card-body">
-                        <a class="btn btn-outline-dark " href="index.php" <?php $_SESSION["statusadmin"] = 0;?>>Log Out</a>
+                    <input type="submit" class="btn btn-outline-dark " name="logoutadmin" value="LogOut">
                     </div>
                 </div>
+                </form>
             </div>
             <div class="col-sm-8 mt-5">
                 <div class="card">

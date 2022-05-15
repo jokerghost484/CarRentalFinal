@@ -1,3 +1,8 @@
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,6 +22,56 @@
 
 <body>
 <?php include("navbaradmin.php"); ?>
+
+<?php
+
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "carweb";
+
+  // Create connection
+  $conn = mysqli_connect($servername, $username, null, $dbname);
+  // Check connection
+  if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+
+  ?>
+
+<?php 
+  $kaan = FALSE;
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      
+      if (isset($_POST['deleterev'])) {
+          $kaan = TRUE;
+          $reservationid = $_POST['flexRadioDefault'];
+          $sql = "DELETE FROM reservationtable WHERE ReservationID='$reservationid'";
+      }
+
+      if ($conn->query($sql) === TRUE) {
+        if($kaan==TRUE){
+          echo "<script> location.href='cancel.php'; </script>";
+        }
+        
+      }
+      
+      
+  }
+
+  function test_input($data)
+  {
+      $data = trim($data);
+      $data = stripslashes($data);
+      $data = htmlspecialchars($data);
+      return $data;
+  }
+  
+  
+  
+  
+  ?>
 
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -38,57 +93,80 @@
     </div>
   </div>
 
+
+  <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+
   <div class="container mt-5">
-    <div class="row">
-      <div class="col">
+      <div class="row">
+        <div class="col">
 
-      </div>
-      <div class="col-9">
-        <div class="card mt-5">
-          <div class="card-header">
-            Bookings
-          </div>
-          <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-4">Customer</li>
-            <li class="list-group-item col-3">Car</li>
-            <li class="list-group-item col-3">Date</li>
-            <li class="list-group-item col-2">Price</li>
+        </div>
+        <div class="col-9">
+          <div class="card mt-5">
+            <div class="card-header">
+              Bookings
+            </div>
+            <ul class="list-group list-group-horizontal">
+              <li class="list-group-item col-2">Option</li>
+              <li class="list-group-item col-2">CarID</li>
+              <li class="list-group-item col-4">CustomerEmail</li>
+              <li class="list-group-item col-2">PickUpDay</li>
+              <li class="list-group-item col-2">DropOffDay</li>
 
-          </ul>
-          <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-4">Kaan Akgün</li>
-            <li class="list-group-item col-3">Peugeot</li>
-            <li class="list-group-item col-3">2022-29-04</li>
-            <li class="list-group-item col-2">350$</li>
-          </ul>
-          <div class="Cancel-button mx-auto pt-2 pb-2">
-            <a class="btn btn-outline-danger " data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Cancel
-              Reservation</a>
-          </div>
-          <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-4">Customer</li>
-            <li class="list-group-item col-3">Car</li>
-            <li class="list-group-item col-3">Date</li>
-            <li class="list-group-item col-2">Price</li>
+            </ul>
+            <?php
+            $email = $_SESSION['email'];
+            $sql = "SELECT * FROM reservationtable WHERE CustomerEmail='$email'";
+            $result = $conn->query($sql);
 
-          </ul>
+
+
+
+
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+                echo '
+          
+          
+          
+          
+          
           <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-4">Kean Akgün</li>
-            <li class="list-group-item col-3">Honda</li>
-            <li class="list-group-item col-3">2022-22-06</li>
-            <li class="list-group-item col-2">275$</li>
-          </ul>
-          <div class="Cancel-button mx-auto pt-2 pb-2">
-            <a class="btn btn-outline-danger " data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Cancel
-              Reservation</a>
+            <li class="list-group-item col-2">
+
+              <div class="form-chec mt-3 ml-4">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="' . $row["ReservationID"] . '">
+ <label class="form-check-label" for="flexRadioDefault1">
+   
+ </label> 
+
+</li>
+                
+            <li class="list-group-item col-2">' . $row["CarID"] . '</li>
+            <li class="list-group-item col-4">' . $row["CustomerEmail"] . '</li>
+            <li class="list-group-item col-2">' . $row["Pickupday"] . '</li>
+            <li class="list-group-item col-2">' . $row["Dropoffday"] . '</li>
+            
+            
+          </ul>';
+              }
+            }
+
+
+            ?>
+            <div class="Cancel-button mx-auto pt-2 pb-2">
+              <input type="submit" class="btn btn-outline-danger " name="deleterev" value="Delete">
+            </div>
+
           </div>
         </div>
-      </div>
-      <div class="col">
+        <div class="col">
 
+        </div>
       </div>
     </div>
-  </div>
+  </form>
+
 
   <footer>
     <div class="footer">

@@ -160,20 +160,13 @@
 
   <div class="container mt-5">
     <div class="row ">
-      <div class="col-sm-4 mt-5">
-        <div class="card" style="width: 18rem;">
-          <img src="images/No-Image-Found-400x264.png" class="card-img-top" alt="honda">
-          <div class="card-body">
-            <p class="card-text">Please add a car image about car you are going to add. </p>
-            <a class="btn btn-outline-dark" href="#">Add an image</a>
-          </div>
-
-
-        </div>
+      <div class="col-1 mt-5">
+      
+        
       </div>
       <div class="col-sm-8 mt-5">
 
-        <form class="row g-3 mt-3" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <form class="row g-3 mt-3" method="post"  action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
           <div class="mb-3">
             <h2>Create Car Profile </h2>
           </div>

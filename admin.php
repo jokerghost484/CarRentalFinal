@@ -24,8 +24,29 @@
 <body>
 <?php include("navbaradmin.php"); ?>
 
+<?php
+
+    $servername = "localhost";
+    $username = "root";
+    $password = "password";
+    $dbname = "carweb";
+
+    // Create connection
+    $conn = mysqli_connect($servername, $username, null, $dbname);
+    // Check connection
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    ?>
+
+
+
   <div class="container">
     <div class="row">
+
+
+
       <div class="col mt-5 " style="text-align: center;">
         <a class="btn btn-outline-secondary" href="addcar.php">Add Car</a>
       </div>
@@ -45,7 +66,10 @@
 
   <div class="container mt-5">
     <div class="row">
-      <div class="col mt-5">
+
+
+
+      <div class="col-3 mt-5">
         <div class="card border-success mb-3" style="max-width: 18rem;">
           <div class="card-header">
             <h5 class="card-title ">Income <span class="badge bg-info text-dark ml-3">Monthly</span></h5>
@@ -54,52 +78,100 @@
           <div class="card-body text-dark">
             <h2>80,967,544</h2>
             <p class="card-text">Total Income <span style="float:right;">
-                10%<i class="fa-solid fa-arrow-turn-up" style="color: green;"></i>
+               
               </span></p>
           </div>
         </div>
       </div>
-      <div class="col mt-5">
+      <div class="col-3 mt-5">
         <div class="card border-success mb-3" style="max-width: 18rem;">
           <div class="card-header">
-            <h5 class="card-title ">Bookings <span class="badge bg-info text-dark ml-3">Monthly</span></h5>
+            <h5 class="card-title ">Bookings <span class="badge bg-info text-dark ml-3">Total</span></h5>
 
           </div>
-          <div class="card-body text-dark">
-            <h2>10,967,544</h2>
-            <p class="card-text">New Bookings <span style="float:right;">
-                15%<i class="fa-solid fa-arrow-turn-up" style="color: green;"></i>
-              </span></p>
-          </div>
+          
+          <?php
+            
+            $sql = "SELECT COUNT(*) AS reservations FROM reservationtable ";
+            $result = $conn->query($sql);
+
+
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+                echo '
+          
+                <div class="card-body text-dark">
+                <h2>'.$row["reservations"].'</h2>
+                
+              </div>'
+ ;
+              }
+            }
+
+
+            ?>
         </div>
       </div>
-      <div class="col mt-5">
+      <div class="col-3 mt-5">
         <div class="card border-success mb-3" style="max-width: 18rem;">
           <div class="card-header">
             <h5 class="card-title ">Visitors <span class="badge bg-info text-dark ml-3">Monthly</span></h5>
 
           </div>
-          <div class="card-body text-dark">
-            <h2>40,967,544</h2>
-            <p class="card-text">New Visitors <span style="float:right;">
-                30%<i class="fa-solid fa-arrow-turn-up" style="color: green;"></i>
-              </span></p>
-          </div>
+          <?php
+            
+            $sql = "SELECT COUNT(*) AS members FROM customertable ";
+            $result = $conn->query($sql);
+
+
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+                echo '
+          
+                <div class="card-body text-dark">
+                <h2>'.$row["members"].'</h2>
+                
+              </div>'
+ ;
+              }
+            }
+
+
+            ?>
         </div>
       </div>
-      <div class="col mt-5">
+      <div class="col-3 mt-5">
         <div class="card border-success mb-3" style="max-width: 18rem;">
           <div class="card-header">
-            <h5 class="card-title ">Cars <span class="badge bg-info text-dark ml-3">Monthly</span></h5>
+            <h5 class="card-title ">Cars <span class="badge bg-info text-dark ml-3">Total</span></h5>
           </div>
-          <div class="card-body text-dark">
-            <h2>6</h2>
-            <p class="card-text">New Cars <span style="float:right;">
-                17%<i class="fa-solid fa-arrow-turn-up" style="color: green;"></i>
-              </span></p>
-          </div>
+          <?php
+            
+            $sql = "SELECT COUNT(*) AS cars FROM cartable ";
+            $result = $conn->query($sql);
+
+
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+                echo '
+          
+                <div class="card-body text-dark">
+                <h2>'.$row["cars"].'</h2>
+               
+              </div>'
+ ;
+              }
+            }
+
+
+            ?>
+          
         </div>
       </div>
+
+
+
+
     </div>
   </div>
 
