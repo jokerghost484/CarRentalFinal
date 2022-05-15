@@ -28,6 +28,55 @@
 <?php include("navbar.php"); ?>
 
 
+  <?php
+
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "carweb";
+
+  // Create connection
+  $conn = mysqli_connect($servername, $username, null, $dbname);
+  // Check connection
+  if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+
+  ?>
+
+<?php 
+  $kaan = FALSE;
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      
+      if (isset($_POST['logout'])) {
+          $_SESSION["status"] = 0;
+          $kaan = TRUE;
+      }
+      if($kaan==TRUE){
+        echo "<script> location.href='index.php'; </script>";
+      }
+
+      
+      
+      
+  }
+
+  function test_input($data)
+  {
+      $data = trim($data);
+      $data = stripslashes($data);
+      $data = htmlspecialchars($data);
+      return $data;
+  }
+  
+  
+  
+  
+  ?>
+
+
+
   <div>
     <div class="container mt-5">
       <div class="row">
@@ -47,23 +96,49 @@
         <div class="col">
         </div>
         <div class="col mt-5">
-          <div class="card" style="width: 18rem;">
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <div class="card" style="width: 18rem;">
             <div class="card-header">
               MyAccount
             </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">Kaan Akgün</li>
-              <li class="list-group-item">19-25</li>
-              <li class="list-group-item">License id : 666</li>
-              <li class="list-group-item">Venice</li>
-            </ul>
+            <?php
+            $email = $_SESSION['email'];
+            $sql = "SELECT * FROM customertable WHERE CustomerEmail='$email'";
+            $result = $conn->query($sql);
+
+
+
+
+
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+                echo '
+          
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item">'.$row["CustomerName"].'</li>
+                <li class="list-group-item">'.$row["CustomerAge"].'</li>
+                <li class="list-group-item">'.$row["CustomerLicenseID"].'</li>
+                <li class="list-group-item">'.$row["CustomerState"].'</li>
+              </ul>'
+ ;
+              }
+            }
+
+
+            ?>
+           
+
+
             <div class="card-body">
               <a class="btn btn-outline-dark " href="bookings.php">Bookings</a>
             </div>
             <div class="card-body">
-              <a class="btn btn-outline-dark " href="index.php" <?php $_SESSION["status"] = 0;?> >Log Out</a>
+            <input type="submit" class="btn btn-outline-dark " name="logout" value="LogOut">
             </div>
           </div>
+          
+      </form>
+          
         </div>
       </div>
     </div>

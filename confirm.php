@@ -40,6 +40,55 @@
 
   ?>
 
+
+<?php
+  
+
+  
+  /*if ($kaan == TRUE) {
+    $customerid = $_SESSION["customerid"];
+    $carid = $_SESSION["carid"];
+    $pickupday = $_SESSION["pickupday"];
+    $dropoffday = $_SESSION["dropoffday"];
+
+    $insert_reservation =   ("INSERT INTO reservationtable('CustomerID', 'CarID', 'Pickupday', 'Dropoffday') VALUES ('$customerid','$carid','$pickupday','$dropoffday')");
+
+    $stmt = $conn->prepare("INSERT INTO reservationtable (CustomerID, CarID, Pickupday, Dropoffday)
+     VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $customerid, $carid, $pickupday, $dropoffday);
+    if (isset($_SESSION["customerid"])) {
+        
+      }
+      if (isset($_SESSION["carid"])) {
+        
+      }
+      if (isset($_SESSION["pickupday"])) {
+        
+      }
+      if (isset($_SESSION["dropoffday"])) {
+        
+      }
+    
+    
+    
+    
+    
+    
+  }*/
+
+
+
+  function test_input($data)
+  {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }
+
+  ?>
+
+
 <?php
   $filler = $_SESSION["carid"];
   $sql = "SELECT * FROM cartable WHERE CarID = $filler ";
@@ -141,7 +190,13 @@
 
 
 
-
+  <?php 
+  
+  
+  
+  
+  
+  ?>
   <div class="container">
     <div class="row">
       <div class="col">

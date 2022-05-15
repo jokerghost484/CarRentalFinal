@@ -77,6 +77,7 @@ if (!$conn) {
                 else{
                   $_SESSION["name"]=$row["CustomerName"];
                   $_SESSION["email"]=$row["CustomerEmail"];
+                  $_SESSION["customerid"]=$row["CustomerID"];
                   $_SESSION["status"] = 1;
                 }
                 

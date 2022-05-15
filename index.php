@@ -94,46 +94,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   else{
     $_SESSION["pickupday"] = $pickupday;
-    $_SESSION["pickupday"] = $pickupday;
+    $_SESSION["dropoffday"] = $dropoffday;
   }
-    
-/*
-  if ($kaan == TRUE) {
-    $stmt = $conn->prepare("INSERT INTO customertable (CustomerEmail, CustomerPassword, CustomerName, CustomerAddress,CustomerLicenseID,CustomerAge,CustomerState,CustomerZip )
-     VALUES (?, ?, ?, ?, ?,?,?,?)");
-    $stmt->bind_param("ssssssss", $email, $password, $name, $address, $license, $age, $state, $zip);
 
-    if (isset($_POST['email'])) {
-     
-      if($kaan==TRUE){
-        $email = $_POST["email"];
-      }
-
-    }
-    if (isset($_POST['password'])) {
-      $password = md5($_POST["password"]);
-    }
-    if (isset($_POST['name'])) {
-      $name = $_POST["name"];
-    }
-    if (isset($_POST['address'])) {
-      $address = $_POST["address"];
-    }
-    if (isset($_POST['license'])) {
-      $license = $_POST["license"];
-    }
-    if (isset($_POST['age'])) {
-      $age = $_POST["age"];
-    }
-    if (isset($_POST['state'])) {
-      $state = $_POST["state"];
-    }
-    if (isset($_POST['zip'])) {
-      $zip = $_POST["zip"];
-    }
-    $stmt->execute();
-  }
-*/
   if ($kaan == TRUE) {
     echo "<script> location.href='carpage.php'; </script>";
   }
