@@ -1,3 +1,8 @@
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,6 +23,86 @@
 
 <body>
   <?php include("navbar.php"); ?>
+
+
+
+  <?php
+
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "carweb";
+
+  // Create connection
+  $conn = mysqli_connect($servername, $username, null, $dbname);
+  // Check connection
+  if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+
+  ?>
+
+
+
+<?php
+ $mesemail =  $message = "";
+ $mesemailErr = $message  = "";
+ 
+
+
+ if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   $kaan = TRUE;
+
+   
+   
+
+   if (empty($_POST["mesemail"])) {
+     $mesemailErr = "mesemail is required";
+     $kaan = FALSE;
+   } else {
+     $mesemail = test_input($_POST["mesemail"]);
+   }
+
+   if (empty($_POST["message"])) {
+     $messageErr = "message is required";
+     $kaan = FALSE;
+   } else {
+     $message = test_input($_POST["message"]);
+   }
+
+
+   if ($kaan == TRUE) {
+     $stmt = $conn->prepare("INSERT INTO messagetable (MessageEmail,Message )
+      VALUES (?, ?)");
+     $stmt->bind_param("ss", $mesemail, $message);
+
+     
+     if (isset($_POST['mesemail'])) {
+       $mesemail = $_POST["mesemail"];
+     }
+     if (isset($_POST['message'])) {
+       $message = $_POST["message"];
+     }
+     
+     $stmt->execute();
+   }
+
+   if ($kaan == TRUE) {
+     echo "<script> location.href='index.php'; </script>";
+   }
+ }
+
+
+
+ function test_input($data)
+ {
+   $data = trim($data);
+   $data = stripslashes($data);
+   $data = htmlspecialchars($data);
+   return $data;
+ }
+
+ ?>
 
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -49,18 +134,26 @@
 
       </div>
       <div class="col-10">
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+
+
+        
         <div class="mb-3">
           <label for="exampleFormControlInput1" class="form-label">Email address</label>
-          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+          <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" name="mesemail" value="<?php echo isset($_POST["mesemail"]) ? $_POST["mesemail"] : ''; ?>">
         </div>
         <div class="mb-3 mt-5">
           <label for="exampleComment" class="form-label">Message</label>
-          <textarea class="form-control" id="exampleComment" rows="3"></textarea>
+          <textarea class="form-control" id="exampleComment" rows="3" name="message" value="<?php echo isset($_POST["message"]) ? $_POST["message"] : ''; ?>"></textarea>
         </div>
-        <div class="button56 mt-5 " style="text-align: right;">
-          <a class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Send
-            Comment</a>
-        </div>
+        <div class="row">
+    <div class="col-sm-8"></div>
+    <div class="col-sm-4"><input class="btn btn-outline-info mt-5" type="submit" name="message" value="Send message"></div>
+  </div>
+  
+        
+       
+        </form>
       </div>
       <div class="col">
 
