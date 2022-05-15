@@ -53,16 +53,19 @@ if (!isset($_SESSION)) {
             $_SESSION["carid"] = $carid;
         }
         if ($kaan == TRUE) {
-            $customeremail = $_SESSION["email"];
-            $carid = $_SESSION["carid"];
-            $pickupday = $_SESSION["pickupday"];
-            $dropoffday = $_SESSION["dropoffday"];
-
-            $sql = "INSERT INTO reservationtable(CustomerEmail, CarID, Pickupday, Dropoffday) VALUES ('$customeremail','$carid','$pickupday','$dropoffday')";
-            if($conn->query($sql) === TRUE)
-                $kaan =TRUE;
-            else
-                $kaan =FALSE;
+            if($_SESSION["status"] == 1){
+                $customeremail = $_SESSION["email"];
+                $carid = $_SESSION["carid"];
+                $pickupday = $_SESSION["pickupday"];
+                $dropoffday = $_SESSION["dropoffday"];
+    
+                $sql = "INSERT INTO reservationtable(CustomerEmail, CarID, Pickupday, Dropoffday) VALUES ('$customeremail','$carid','$pickupday','$dropoffday')";
+                if($conn->query($sql) === TRUE)
+                    $kaan =TRUE;
+                else
+                    $kaan =FALSE;
+            }
+            
             
         }
         if ($kaan == TRUE) {

@@ -43,38 +43,68 @@
 
 <?php
   
-
+  $nameoncard =  $cardnumber = $expiration = $cvv  = "";
+  $nameoncardErr = $cardnumberErr = $expirationErr = $cvvErr = "";
   
-  /*if ($kaan == TRUE) {
-    $customerid = $_SESSION["customerid"];
-    $carid = $_SESSION["carid"];
-    $pickupday = $_SESSION["pickupday"];
-    $dropoffday = $_SESSION["dropoffday"];
 
-    $insert_reservation =   ("INSERT INTO reservationtable('CustomerID', 'CarID', 'Pickupday', 'Dropoffday') VALUES ('$customerid','$carid','$pickupday','$dropoffday')");
 
-    $stmt = $conn->prepare("INSERT INTO reservationtable (CustomerID, CarID, Pickupday, Dropoffday)
-     VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $customerid, $carid, $pickupday, $dropoffday);
-    if (isset($_SESSION["customerid"])) {
-        
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kaan = TRUE;
+
+    if (empty($_POST["nameoncard"])) {
+      $nameoncardErr = "Name on Card is required";
+      $kaan = FALSE;
+    } else {
+      $nameoncard = test_input($_POST["nameoncard"]);
+    }
+
+    if (empty($_POST["cardnumber"])) {
+      $cardnumberErr = "Card number is required";
+      $kaan = FALSE;
+    } else {
+      $cardnumber = test_input($_POST["cardnumber"]);
+    }
+
+    if (empty($_POST["expiration"])) {
+      $expirationErr = "State is required";
+      $kaan = FALSE;
+    } else {
+      $expiration = test_input($_POST["expiration"]);
+    }
+
+    if (empty($_POST["cvv"])) {
+      $cvvErr = "Zip is required";
+      $kaan = FALSE;
+    } else {
+      $cvv = test_input($_POST["cvv"]);
+    }
+
+    if ($kaan == TRUE) {
+      $stmt = $conn->prepare("INSERT INTO receipttable (NameOnCard, CardNumber, Expiration, CVV)
+       VALUES (?, ?, ?, ?)");
+      $stmt->bind_param("ssss", $nameoncard, $cardnumber, $expiration, $cvv);
+
+      
+      if (isset($_POST['nameoncard'])) {
+        $nameoncard = $_POST["nameoncard"];
       }
-      if (isset($_SESSION["carid"])) {
-        
+      
+      if (isset($_POST['cardnumber'])) {
+        $cardnumber = $_POST["cardnumber"];
       }
-      if (isset($_SESSION["pickupday"])) {
-        
+      if (isset($_POST['expiration'])) {
+        $expiration = $_POST["expiration"];
       }
-      if (isset($_SESSION["dropoffday"])) {
-        
+      if (isset($_POST['cvv'])) {
+        $cvv = $_POST["cvv"];
       }
-    
-    
-    
-    
-    
-    
-  }*/
+      $stmt->execute();
+    }
+
+    if ($kaan == TRUE) {
+      echo "<script> location.href='bookings.php'; </script>";
+    }
+  }
 
 
 
@@ -85,6 +115,7 @@
     $data = htmlspecialchars($data);
     return $data;
   }
+  
 
   ?>
 
@@ -167,36 +198,15 @@
 
 
 ?>
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" style="font-family: Merriweather, serif" id="exampleModalLabel">Booking Complete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" style="font-family: Merriweather, serif">
-          Booking has done succesfully.You can see your bookings from booking page in MyAccount.
-        </div>
-        <div class="modal-footer" style="font-family: Merriweather, serif">
+ 
 
-          <a class="btn btn-outline-dark" href="index.php">Home</a>
-        </div>
-      </div>
-    </div>
-  </div>
 
   
 
 
 
 
-  <?php 
-  
-  
-  
-  
-  
-  ?>
+
   <div class="container">
     <div class="row">
       <div class="col">
@@ -204,31 +214,30 @@
       </div>
       <div class="col-10 mt-5">
         <h2>Pay with a credit card</h2>
-        <form>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
           <div class="form-row">
             <div class="form-group col-md-4 pr-5">
               <label for="inputName7">Name on Card</label>
-              <input type="email" class="form-control" id="inputName7" placeholder="Name Surname">
+              <input type="text" class="form-control" id="inputName7" placeholder="Name Surname" name="nameoncard" value="<?php echo isset($_POST["nameoncard"]) ? $_POST["nameoncard"] : ''; ?>">
             </div>
             <div class="form-group col-md-4">
               <label for="inputCredit">Credit Card Number</label>
-              <input type="password" class="form-control" id="inputCredit" placeholder="XXXX-XXXX-XXXX-XXXX">
+              <input type="text" class="form-control" id="inputCredit" placeholder="XXXX-XXXX-XXXX-XXXX" name="cardnumber" value="<?php echo isset($_POST["cardnumber"]) ? $_POST["cardnumber"] : ''; ?>">
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group col-md-2 pr-4">
               <label for="inputExpiration">Expiration</label>
-              <input type="text" class="form-control" id="inputExpiration" placeholder="31/12">
+              <input type="text" class="form-control" id="inputExpiration" placeholder="31/12" name="expiration" value="<?php echo isset($_POST["expiration"]) ? $_POST["expiration"] : ''; ?>">
             </div>
             <div class="form-group col-2">
               <label for="imputCvv">CVV</label>
-              <input type="text" class="form-control" id="inputCvv" placeholder="XXX">
+              <input type="text" class="form-control" id="inputCvv" placeholder="XXX" name="cvv" value="<?php echo isset($_POST["cvv"]) ? $_POST["cvv"] : ''; ?>">
             </div>
           </div>
           <div class="button12 pt-4">
-            <a class="btn btn-outline-dark " data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Confirm
-              Purchase</a>
+          <input class="btn btn-outline-dark mt-5" type="submit" name="Confirm" value="ConfirmPurchase">
           </div>
 
         </form>
