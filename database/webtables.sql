@@ -51,4 +51,11 @@ Dropoffday	DATE	NOT NULL,
 PRIMARY KEY(ReservationID),
 FOREIGN KEY(CarID) REFERENCES cartable(CarID) ON DELETE CASCADE ON UPDATE CASCADE
 );
+/*
+Planned tables but could not use due to time
+*/
+CREATE TABLE team;
+CREATE TABLE cart;
+CREATE TABLE login;
+CREATE TABLE customercard;
 
