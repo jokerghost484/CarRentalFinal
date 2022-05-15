@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,6 +23,117 @@
 
 <body>
   <?php include("navbaradmin.php"); ?>
+
+
+  <?php
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "carweb";
+
+
+  // Create connection
+  $conn = mysqli_connect($servername, $username, null, $dbname);
+  // Check connection
+  if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+  // define variables and set to empty values
+  $carname =  $quantity = $carid = $type = $fuel = $passenger =  $price = "";
+  $carnameErr =  $quantityErr = $caridErr = $typeErr = $fuelErr = $passengerErr =  $priceErr = "";
+  
+
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kaan = TRUE;
+
+    if (empty($_POST["carname"])) {
+      $carnameErr = "Password is required";
+      $kaan = FALSE;
+    } else {
+      $carname = test_input($_POST["carname"]);
+      // check if name only contains letters and whitespace
+      if (!preg_match("/^[a-zA-Z-0-9' ]*$/", $carname)) {
+        $carnameErr = "Only letters and white space allowed";
+        $kaan = FALSE;
+      }
+    }
+    
+
+    if (empty($_POST["type"])) {
+      $typeErr = "State is required";
+      $kaan = FALSE;
+    } else {
+      $type = test_input($_POST["type"]);
+    }
+
+    if (empty($_POST["fuel"])) {
+      $fuelErr = "Zip is required";
+      $kaan = FALSE;
+    } else {
+      $fuel = test_input($_POST["fuel"]);
+    }
+
+    if (empty($_POST["passenger"])) {
+      $passengerErr = "LicenseID is required";
+      $kaan = FALSE;
+    } else {
+      $passenger = test_input($_POST["passenger"]);
+    }
+
+    if (empty($_POST["price"])) {
+      $priceErr = "LicenseID is required";
+      $kaan = FALSE;
+    } else {
+      $price = test_input($_POST["price"]);
+    }
+
+
+    if ($kaan == TRUE) {
+      $stmt = $conn->prepare("INSERT INTO cartable (CarName,CarType,Fuel,Passenger,Price)
+       VALUES (?, ?, ?, ?, ?)");
+      $stmt->bind_param("sssss", $carname, $type, $fuel, $passenger, $price);
+
+      if (isset($_POST['carname'])) {
+       
+        if($kaan==TRUE){
+          $carname = $_POST["carname"];
+        }
+
+      }
+      if (isset($_POST['type'])) {
+        $type = $_POST["type"];
+      }
+      if (isset($_POST['fuel'])) {
+        $fuel = $_POST["fuel"];
+      }
+      if (isset($_POST['passenger'])) {
+        $passenger = $_POST["passenger"];
+      }
+      if (isset($_POST['price'])) {
+        $price = $_POST["price"];
+      }
+      
+      $stmt->execute();
+    }
+
+    if ($kaan == TRUE) {
+      echo "<script> location.href='admin.php'; </script>";
+    }
+  }
+
+
+
+  function test_input($data)
+  {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }
+
+  ?>
+
 
 
 
@@ -56,22 +173,18 @@
       </div>
       <div class="col-sm-8 mt-5">
 
-        <form class="row g-3 mt-3">
+        <form class="row g-3 mt-3" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
           <div class="mb-3">
             <h2>Create Car Profile </h2>
           </div>
           <div class="col-md-6" style="text-align: left;">
             <label for="inputCarName" class="form-label">Car Name</label>
-            <input type="name" class="form-control" id="inputCarName">
+            <input type="name" class="form-control" id="carname" name="carname"  value="<?php echo isset($_POST["carname"]) ? $_POST["carname"] : ''; ?>">
           </div>
-          <div class="col-md-6" style="text-align: left;">
-            <label for="inputCarID" class="form-label">CarID</label>
-            <input type="password" class="form-control" id="inputCarID" placeholder="XXXXXXX">
-          </div>
-
+          
           <div class="col-md-3" style="text-align: left;">
             <label for="inputCarType" class="form-label mb-4">CarType</label>
-            <select id="inputCarType" class="form-select">
+            <select id="type" class="form-select" name="type"  value="<?php echo isset($_POST["type"]) ? $_POST["type"] : ''; ?>">
               <option selected>Choose...</option>
               <option>Automatic</option>
               <option>Manual</option>
@@ -81,7 +194,7 @@
           </div>
           <div class="col-md-3" style="text-align: left;">
             <label for="inputFuel" class="form-label mb-4">Fuel</label>
-            <select id="inputFuel" class="form-select">
+            <select id="fuel" class="form-select" name="fuel"  value="<?php echo isset($_POST["fuel"]) ? $_POST["fuel"] : ''; ?>">
               <option selected>Choose...</option>
               <option>Petrol</option>
               <option>Electricity</option>
@@ -91,7 +204,7 @@
           </div>
           <div class="col-md-3 mt-auto" style="text-align: left;">
             <label for="inputPassenger" class="form-label mb-4">Passenger</label>
-            <select id="inputPassenger" class="form-select">
+            <select id="passenger" class="form-select" name="passenger"  value="<?php echo isset($_POST["passenger"]) ? $_POST["passenger"] : ''; ?>">
               <option selected>Choose...</option>
               <option>2</option>
               <option>3</option>
@@ -103,16 +216,14 @@
           </div>
           <div class="col-md-3" style="text-align: left;">
             <label for="inputPrice" class="form-label">Price</label>
-            <input type="password" class="form-control" id="inputPrice" placeholder="$">
+            <input type="name" class="form-control" id="price" placeholder="$" name="price"  value="<?php echo isset($_POST["price"]) ? $_POST["price"] : ''; ?>$">
           </div>
-          <div class="col-12">
-            <label for="inputMiniDescription" class="form-label">Mini Description</label>
-            <input type="text" class="form-control" id="inputMiniDescription" placeholder="Lorem">
-          </div>
+          
 
           <div class="col-12">
-            <a class="btn btn-outline-dark mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Add New
-              Car</a>
+            
+          <input class="btn btn-outline-dark mt-5" type="submit" name="SignUp" value="Add New Car">
+            
           </div>
         </form>
 

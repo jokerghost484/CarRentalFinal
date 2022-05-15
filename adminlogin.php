@@ -1,3 +1,7 @@
+<?php
+session_start();
+
+  ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,27 +21,103 @@
 
 <?php include("navbar.php"); ?>
 
+
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "password";
+$dbname = "carweb";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, null, $dbname);
+// Check connection
+if (!$conn) {
+  die("Connection failed: " . mysqli_connect_error());
+}
+  // define variables and set to empty values
+  $managerid = $password = "";
+  
+  
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kaan = TRUE;
+
+    $password = test_input($_POST["password"]);
+    if (empty($_POST["managerid"])) {
+      $kaan = FALSE;
+    } else {
+      $managerid = test_input($_POST["managerid"]);
+    }
+    
+    if($kaan ==TRUE){
+      $sql = "SELECT ManagerPassword,ManagerName,ManagerPosition FROM managertable WHERE ManagerID='$managerid'";
+      $result = $conn->query($sql);
+      
+        
+       if ($result->num_rows == 0) {
+            $kaan=FALSE;
+        } else if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                if ($row["ManagerPassword"] != md5($password)) {
+                    $notMatchedErr = "Wrong password!";
+                    $kaan=FALSE;
+                }
+                else{
+                  $_SESSION["managername"]=$row["ManagerName"];
+                  $_SESSION["managerid"]=$managerid;
+                  $_SESSION["position"]=$row["ManagerPosition"];
+                  $_SESSION["statusadmin"] = 1;
+                }
+                
+                
+              
+            }
+        }
+        
+    }
+    
+  
+  
+      if($kaan==TRUE){
+        
+        echo "<script> location.href='admin.php'; </script>";
+        
+      }
+      
+    
+  }
+
+  function test_input($data)
+  {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }
+
+?>
+
 <div class="container mt-5">
   <div class="row">
     <div class="col">
 
     </div>
     <div class="col-6 mt-5">
-      <form>
+      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <div class="mb-3">
           <h2>Admin Login</h2>
         </div>
         <div class="mb-3 mt-5" style="text-align: left;">
           <label for="exampleInputID" class="form-label">Admin ID</label>
-          <input type="email" class="form-control" id="exampleInputID">
+          <input type="name" class="form-control" id="managerid" name="managerid" value="<?php echo isset($_POST["managerid"]) ? $_POST["managerid"] : ''; ?>">
 
         </div>
         <div class="mb-3" style="text-align: left;">
           <label for="exampleInputPassword10" class="form-label">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword10">
+          <input type="password" class="form-control" id="password" name="password" value="<?php echo isset($_POST["password"]) ? $_POST["password"] : ''; ?>">
         </div>
 
-        <a class="btn btn-outline-dark mt-5" href="admin.php">Login</a>
+        <input class="btn btn-outline-dark mt-5" type="submit" name="LogIn" value="LogIn">
 
       </form>
 

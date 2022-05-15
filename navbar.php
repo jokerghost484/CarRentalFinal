@@ -26,7 +26,6 @@
             
             <?php if($_SESSION["status"] == 1){
               
-            
               ?>
               <a class="navbar-brand" href="myaccount.php"> <?php echo $_SESSION["name"]  ?>
               <i class="fa-solid fa-user"></i>

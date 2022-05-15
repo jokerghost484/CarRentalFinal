@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,6 +28,127 @@
 <body>
 <?php include("navbar.php"); ?>
 
+<?php 
+
+
+$servername = "localhost";
+$username = "root";
+$password = "password";
+$dbname = "carweb";
+
+
+// Create connection
+$conn = mysqli_connect($servername, $username, null, $dbname);
+// Check connection
+if (!$conn) {
+  die("Connection failed: " . mysqli_connect_error());
+}
+// define variables and set to empty values
+$pickup =  $dropoff = $pickupday = $dropoffday = "";
+$pickupErr = $dropdownErr =   "";
+
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $kaan = TRUE;
+
+  
+  
+  
+
+  if (empty($_POST["pickup"])) {
+    $kaan = FALSE;
+  } else {
+    $pickup = test_input($_POST["pickup"]);
+    // check if name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z-' ]*$/", $pickup)) { 
+      $kaan = FALSE;
+    }
+  }
+
+  if (empty($_POST["dropoff"])) {
+    $kaan = FALSE;
+  } else {
+    $dropoff = test_input($_POST["dropoff"]);
+    // check if name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z-' ]*$/", $dropoff)) { 
+      $kaan = FALSE;
+    }
+  }
+
+  if (empty($_POST["pickupday"])) {
+    $kaan = FALSE;
+  } else {
+    $pickupday = test_input($_POST["pickupday"]);
+  }
+
+
+  if (empty($_POST["dropoffday"])) {
+    $kaan = FALSE;
+  } else {
+    $dropoffday = test_input($_POST["dropoffday"]);
+  }
+
+  if($pickupday > $dropoffday){
+    $kaan=false;
+  }
+  else{
+    $_SESSION["pickupday"] = $pickupday;
+    $_SESSION["pickupday"] = $pickupday;
+  }
+    
+/*
+  if ($kaan == TRUE) {
+    $stmt = $conn->prepare("INSERT INTO customertable (CustomerEmail, CustomerPassword, CustomerName, CustomerAddress,CustomerLicenseID,CustomerAge,CustomerState,CustomerZip )
+     VALUES (?, ?, ?, ?, ?,?,?,?)");
+    $stmt->bind_param("ssssssss", $email, $password, $name, $address, $license, $age, $state, $zip);
+
+    if (isset($_POST['email'])) {
+     
+      if($kaan==TRUE){
+        $email = $_POST["email"];
+      }
+
+    }
+    if (isset($_POST['password'])) {
+      $password = md5($_POST["password"]);
+    }
+    if (isset($_POST['name'])) {
+      $name = $_POST["name"];
+    }
+    if (isset($_POST['address'])) {
+      $address = $_POST["address"];
+    }
+    if (isset($_POST['license'])) {
+      $license = $_POST["license"];
+    }
+    if (isset($_POST['age'])) {
+      $age = $_POST["age"];
+    }
+    if (isset($_POST['state'])) {
+      $state = $_POST["state"];
+    }
+    if (isset($_POST['zip'])) {
+      $zip = $_POST["zip"];
+    }
+    $stmt->execute();
+  }
+*/
+  if ($kaan == TRUE) {
+    echo "<script> location.href='carpage.php'; </script>";
+  }
+}
+
+function test_input($data)
+{
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+
+?>
+
   <div class="container">
     <div class="row">
       <div class="col">
@@ -29,19 +156,19 @@
       </div>
       <div class="col-6 mt-5">
         <h1>Car Hire</h1>
-        <form class="cf" action="carpage.php">
+        <form class="cf" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
           <div class="half left cf">
             <br>
-            <input type="pickup" id="input-pickup" placeholder="PickUp">
+            <input type="pickup" id="pickup" placeholder="PickUp" name="pickup" value="<?php echo isset($_POST["pickup"]) ? $_POST["pickup"] : ''; ?>">
             <br>
-            <input type="dropoff" id="input-dropoff" placeholder="DropOff">
+            <input type="dropoff" id="dropoff" placeholder="DropOff" name="dropoff" value="<?php echo isset($_POST["dropoff"]) ? $_POST["dropoff"] : ''; ?>">
 
           </div>
           <div class="half right cf">
             <label for="PickUpDay">PickUpDay </label>
-            <input type="date" id="PickUpDay" name="PickUpDay">
+            <input type="date" id="pickupday" name="pickupday" value="<?php echo isset($_POST["pickupday"]) ? $_POST["pickupday"] : ''; ?>">
             <label for="PickDownDay">PickDownDay</label>
-            <input type="date" id="PickDownDay" name="PickDownDay">
+            <input type="date" id="dropoffday" name="dropoffday" value="<?php echo isset($_POST["dropoffday"]) ? $_POST["dropoffday"] : ''; ?>">
           </div>
           <input type="submit" value="Search" id="input-submit">
         </form>

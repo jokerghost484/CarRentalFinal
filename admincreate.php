@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,24 +26,119 @@
 
 <?php include("navbaradmin.php"); ?>
 
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" style="font-family: Merriweather, serif" id="exampleModalLabel">Admin Create Complete
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" style="font-family: Merriweather, serif">
-          You have succesfully created new admin profile.
-        </div>
-        <div class="modal-footer" style="font-family: Merriweather, serif">
 
-          <a class="btn btn-outline-dark" href="adminprofile.php">Back</a>
-        </div>
-      </div>
-    </div>
-  </div>
+<?php
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "carweb";
+
+
+  // Create connection
+  $conn = mysqli_connect($servername, $username, null, $dbname);
+  // Check connection
+  if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+  // define variables and set to empty values
+  $name = $password = $managerid = $position =  "";
+  $nameErr = $passwordErr = $manageridErr = $positionErr = "";
+  
+
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kaan = TRUE;
+
+    if (empty($_POST["name"])) {
+      $nameErr = "Name is required";
+      $kaan = FALSE;
+    } else {
+      $name = test_input($_POST["name"]);
+      // check if e-mail address is well-formed
+      if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
+        $nameErr = "Only letters and white space allowed";
+        $kaan = FALSE;
+      }
+    }
+
+    if (empty($_POST["managerid"])) {
+      $manageridErr = "ManagerID is required";
+      $kaan = FALSE;
+    } else {
+      $managerid = test_input($_POST["managerid"]);
+      // check if name only contains letters and whitespace
+      
+    }
+    
+    if (empty($_POST["password"])) {
+      $passwordErr = "Password is required";
+      $kaan = FALSE;
+    } else {
+      $password = test_input($_POST["password"]);
+      // check if name only contains letters and whitespace
+      if (!preg_match("/^[a-zA-Z-0-9' ]*$/", $password)) {
+        $passwordErr = "Only letters and white space allowed";
+        $kaan = FALSE;
+      }
+    }
+
+    
+
+    if (empty($_POST["position"])) {
+      $positionErr = "Position is required";
+      $kaan = FALSE;
+    } else {
+      $position = test_input($_POST["position"]);
+    }
+
+    
+
+    
+
+    if ($kaan == TRUE) {
+      $stmt = $conn->prepare("INSERT INTO managertable (ManagerName, ManagerID, ManagerPassword, ManagerPosition )
+       VALUES (?, ?, ?, ?)");
+      $stmt->bind_param("ssss", $name, $managerid, $password, $position);
+
+      if (isset($_POST['name'])) {
+       
+        if($kaan==TRUE){
+          $name = $_POST["name"];
+        }
+
+      }
+      if (isset($_POST['managerid'])) {
+        $managerid = $_POST["managerid"];
+      }
+      if (isset($_POST['password'])) {
+        $password = md5($_POST["password"]);
+      }
+      if (isset($_POST['position'])) {
+        $position = $_POST["position"];
+      }
+      
+      $stmt->execute();
+    }
+
+    if ($kaan == TRUE) {
+      echo "<script> location.href='adminprofile.php'; </script>";
+    }
+  }
+
+
+
+
+  function test_input($data)
+  {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }
+
+  ?>
+
+ 
 
   <div class="container mt-5">
     <div class="row">
@@ -46,26 +147,26 @@
       </div>
       <div class="col-9 mt-5">
         <h2>Create Admin Profile For New Employee</h2>
-        <form>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
           <div class="form-row">
             <div class="form-group col-md-4 pr-5">
               <label for="inputName9">Name and Surname</label>
-              <input type="email" class="form-control" id="inputName9" placeholder="Name Surname">
+              <input type="name" class="form-control" id="name" name="name" placeholder="Name Surname" value="<?php echo isset($_POST["name"]) ? $_POST["name"] : ''; ?>">
             </div>
             <div class="form-group col-md-4">
               <label for="inputCredit">Admin ID</label>
-              <input type="password" class="form-control" id="inputCredit" placeholder="XXXXXXXXXXXXX">
+              <input type="text" class="form-control" id="managerid" name="managerid" placeholder="XXXX" value="<?php echo isset($_POST["managerid"]) ? $_POST["managerid"] : ''; ?>">
             </div>
           </div>
 
           <div class="form-row">
             <div class="mb-3" style="text-align: left;">
-              <label for="exampleInputPassword1" class="form-label">Password</label>
-              <input type="password" class="form-control" id="exampleInputPassword1">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" value="<?php echo isset($_POST["password"]) ? $_POST["password"] : ''; ?>">
             </div>
             <div class="col-md-3 ml-5" style="text-align: left;">
-              <label for="inputAge" class="form-label mb-4">Position</label>
-              <select id="inputAge" class="form-select">
+              <label for="position" class="form-label mb-4">Position</label>
+              <select id="position" class="form-select" name="position" value="<?php echo isset($_POST["position"]) ? $_POST["position"] : ''; ?>">
                 <option selected>Choose...</option>
                 <option>Manager</option>
                 <option>Co-Manager</option>
@@ -75,8 +176,7 @@
             </div>
           </div>
           <div class="button12 mt-5">
-            <a class="btn btn-outline-dark " data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Create New
-              Admin</a>
+          <button type="btn btn-outline-dark mt-5" class="btn btn-outline-dark" id="crtbtn">Create Admin Profile</button>
           </div>
 
         </form>

@@ -61,7 +61,7 @@
               <a class="btn btn-outline-dark " href="bookings.php">Bookings</a>
             </div>
             <div class="card-body">
-              <a class="btn btn-outline-dark " href="#" onclick=" show('Page1','Page2');">Log Out</a>
+              <a class="btn btn-outline-dark " href="index.php" <?php $_SESSION["status"] = 0;?> >Log Out</a>
             </div>
           </div>
         </div>

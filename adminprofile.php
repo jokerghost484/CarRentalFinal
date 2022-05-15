@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,8 +35,8 @@
                     </div>
 
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Kaan Akgün</li>
-                        <li class="list-group-item">Manager</li>
+                        <li class="list-group-item"><?php echo $_SESSION["managername"]  ?></li>
+                        <li class="list-group-item"><?php echo $_SESSION["position"]  ?></li>
                     </ul>
                     <div class="card-body">
                         <a class="btn btn-outline-dark " href="#">Edit Profile Picture</a>
@@ -39,7 +45,7 @@
                         <a class="btn btn-outline-dark " href="admincreate.php">Create Admin Profile</a>
                     </div>
                     <div class="card-body">
-                        <a class="btn btn-outline-dark " href="home.php">Log Out</a>
+                        <a class="btn btn-outline-dark " href="index.php" <?php $_SESSION["statusadmin"] = 0;?>>Log Out</a>
                     </div>
                 </div>
             </div>

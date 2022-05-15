@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,8 +24,100 @@
 <body>
 <?php include("navbar.php"); ?>
 
+<?php
+
+  $servername = "localhost";
+  $username = "root";
+  $password = "password";
+  $dbname = "carweb";
+
+  // Create connection
+  $conn = mysqli_connect($servername, $username, null, $dbname);
+  // Check connection
+  if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+  }
+
+  ?>
+
+<?php
+  $filler = $_SESSION["carid"];
+  $sql = "SELECT * FROM cartable WHERE CarID = $filler ";
+  $result = $conn->query($sql);
 
 
+
+  if ($result->num_rows == 0) {
+    $kaan = FALSE;
+  } else if ($result->num_rows > 0) {
+    
+    while ($row = $result->fetch_assoc()){
+      echo '<div class="container mt-5">
+      <div class="row ">
+        <div class="col-sm-4 mt-5" style="font-family: Merriweather, serif">
+          <div class="card" style="width: 18rem;">
+            <img src="images/sports-car-background-hd-1920x1080-329208.jpg" class="card-img-top" alt="peugeot">
+            <div class="card-body">
+              <h5 class="card-title">'.$row["CarName"].'</h5>
+              <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">'.$row["CarType"].'</li>
+              <li class="list-group-item">'.$row["Fuel"].'</li>
+              <li class="list-group-item">'.$row["Passenger"].' <i class="fa-solid fa-user"></i></li>
+            </ul>
+  
+          </div>
+        </div>
+        <div class="col-sm-8 mt-5">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"> Confirm Your Purchase</h5>
+              <ul class="list-group list-group-flush" style="font-family: Merriweather, serif">
+                <li class="list-group-item">
+                  <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                  ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
+                  inventore maiores.
+                </li>
+                <li class="list-group-item">
+                  <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                  ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
+                </li>
+                <li class="list-group-item">
+                  <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                  ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
+                </li>
+                <li class="list-group-item">
+                  <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                  ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
+                </li>
+                <li class="list-group-item">
+                  <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                  ipsum dolor sit amet.
+                </li>
+                <li class="list-group-item">
+                  <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
+                  ipsum.
+                </li>
+                <li class="list-group-item" style="text-align: center;font-size: 30px;">
+                  $350
+                </li>
+  
+  
+  
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>';
+    }
+  }
+
+
+
+
+?>
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -38,65 +136,7 @@
     </div>
   </div>
 
-  <div class="container mt-5">
-    <div class="row ">
-      <div class="col-sm-4 mt-5" style="font-family: Merriweather, serif">
-        <div class="card" style="width: 18rem;">
-          <img src="images/sports-car-background-hd-1920x1080-329208.jpg" class="card-img-top" alt="peugeot">
-          <div class="card-body">
-            <h5 class="card-title">Peugeot</h5>
-            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-          </div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Automatic</li>
-            <li class="list-group-item">Petrol</li>
-            <li class="list-group-item">2 <i class="fa-solid fa-user"></i></li>
-          </ul>
-
-        </div>
-      </div>
-      <div class="col-sm-8 mt-5">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title"> Confirm Your Purchase</h5>
-            <ul class="list-group list-group-flush" style="font-family: Merriweather, serif">
-              <li class="list-group-item">
-                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                inventore maiores.
-              </li>
-              <li class="list-group-item">
-                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-              </li>
-              <li class="list-group-item">
-                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-              </li>
-              <li class="list-group-item">
-                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-              </li>
-              <li class="list-group-item">
-                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                ipsum dolor sit amet.
-              </li>
-              <li class="list-group-item">
-                <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                ipsum.
-              </li>
-              <li class="list-group-item" style="text-align: center;font-size: 30px;">
-                $350
-              </li>
-
-
-
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  
 
 
 
