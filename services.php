@@ -289,15 +289,29 @@ function test_input($data)
         <form class="cf" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
           <div class="half left cf">
             <br>
-            <input type="pickup" id="pickup" placeholder="PickUp" name="pickup" value="<?php echo isset($_POST["pickup"]) ? $_POST["pickup"] : ''; ?>">
+            <label for="pickup" class="form-label ">PickUp</label>
+            <select id="pickup" name="pickup" class="form-select" value="<?php echo isset($_POST["pickup"]) ? $_POST["pickup"] : ''; ?>">
+              <option selected>PCity</option>
+              <option>Tokyo</option>
+              <option>Paris</option>
+              <option>Venice</option>
+              <option>New York</option>
+            </select>
             <br>
-            <input type="dropoff" id="dropoff" placeholder="DropOff" name="dropoff" value="<?php echo isset($_POST["dropoff"]) ? $_POST["dropoff"] : ''; ?>">
-
+            
+            <label for="dropoff" class="form-label ">DropOff</label>
+            <select id="dropoff" name="dropoff" class="form-select " value="<?php echo isset($_POST["dropoff"]) ? $_POST["dropoff"] : ''; ?>">
+              <option selected>DCity</option>
+              <option>Tokyo</option>
+              <option>Paris</option>
+              <option>Venice</option>
+              <option>New York</option>
+            </select>
           </div>
           <div class="half right cf">
             <label for="PickUpDay">PickUpDay </label>
-            <input type="date" id="pickupday" name="pickupday" value="<?php echo isset($_POST["pickupday"]) ? $_POST["pickupday"] : ''; ?>">
-            <label for="PickDownDay">PickDownDay</label>
+            <input type="date" id="pickupday" name="pickupday"  value="<?php echo isset($_POST["pickupday"]) ? $_POST["pickupday"] : ''; ?>">
+            <label for="DropOffDay">DropOffDay </label>
             <input type="date" id="dropoffday" name="dropoffday" value="<?php echo isset($_POST["dropoffday"]) ? $_POST["dropoffday"] : ''; ?>">
           </div>
           <input type="submit" value="Search" id="input-submit">

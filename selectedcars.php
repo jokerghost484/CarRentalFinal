@@ -117,10 +117,8 @@ if (!$conn) {
 
   <div class="container mt-5">
       <div class="row">
-        <div class="col">
-
-        </div>
-        <div class="col-9">
+        
+        <div class="col-12">
           <div class="card mt-5">
             <div class="card-header">
               <?php 
@@ -135,23 +133,30 @@ if (!$conn) {
               ?>
             </div>
             <ul class="list-group list-group-horizontal">
-              <li class="list-group-item col-2">Option</li>
+              <li class="list-group-item col-1">Option</li>
               <li class="list-group-item col-2">CarNumber</li>
-              <li class="list-group-item col-2">Fuel</li>
-              <li class="list-group-item col-2">Type</li>  
-              <li class="list-group-item col-2">Size</li>
+              <li class="list-group-item col-2">Type</li>
+              <li class="list-group-item col-2">Fuel</li>  
+              <li class="list-group-item col-1">Size</li>
+              <li class="list-group-item col-2">City</li>
               <li class="list-group-item col-1">Price</li>
               <li class="list-group-item col-1">Status</li>
 
             </ul>
             <?php
             $modelid = $_SESSION['modelid'];
-            $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,
-            c.CarStatus FROM cartable c,carmodeltable m WHERE m.ModelID =$modelid  AND m.ModelID = c.ModelID";
+            
+              if($_SESSION["citycheck"] == 0){
+                $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,
+                c.CarStatus,c.City FROM cartable c,carmodeltable m WHERE m.ModelID ='$modelid'  AND m.ModelID = c.ModelID";
+              }
+              else if($_SESSION["citycheck"] == 1){
+                $city = $_SESSION["carcity"];
+                $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,
+                c.CarStatus,c.City FROM cartable c,carmodeltable m WHERE m.ModelID ='$modelid'  AND m.ModelID = c.ModelID AND c.City = '$city'";
+              }
+
             $result = $conn->query($sql);
-
-
-
 
 
             if ($result->num_rows > 0) {
@@ -163,7 +168,7 @@ if (!$conn) {
           
           
           <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-2">
+            <li class="list-group-item col-1">
 
               <div class="form-chec mt-3 ml-4">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault" value="' . $row["CarID"] . '">
@@ -176,9 +181,11 @@ if (!$conn) {
             <li class="list-group-item col-2">' . $row["CarNumber"] . '</li>
             <li class="list-group-item col-2">' . $row["CarType"] . '</li>
             <li class="list-group-item col-2">' . $row["Fuel"] . '</li>
-            <li class="list-group-item col-2">' . $row["CarSize"] . '</li>
+            <li class="list-group-item col-1">' . $row["CarSize"] . '</li>
+            <li class="list-group-item col-2">' . $row["City"] . '</li>
             <li class="list-group-item col-1">' . $row["Price"] .'$</li>
             <li class="list-group-item col-1">' . $row["CarStatus"] .'</li>
+            
             
             
             
@@ -196,9 +203,7 @@ if (!$conn) {
 
           </div>
         </div>
-        <div class="col">
-
-        </div>
+        
       </div>
     </div>
   </form>

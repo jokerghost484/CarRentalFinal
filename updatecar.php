@@ -44,31 +44,69 @@ if (!isset($_SESSION)) {
 
   $kaan = FALSE;
   $ghost = FALSE;
+  $city = "";
+  $modelid = "";
+  $holder = 0;
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $modelid = test_input($_POST['flexRadioDefault']);
+    
+    
     if (isset($_POST['addcar'])) {
       $kaan = TRUE;
+      if ((isset($_POST["flexRadioDefault"]))) {
+        $modelid = $_POST['flexRadioDefault'];
+        
+    }
+    else{
+      $kaan = FALSE;
 
-      $modelid = $_POST['flexRadioDefault'];
-      $_SESSION["modelid"] = $modelid;
+    }
+    if ($_POST["city"] == 'Choose...') {
+      $kaan = FALSE;
+      
+    } else {
+      $city = test_input($_POST["city"]);
+    }
+
+      
       if ($kaan == TRUE) {
-
-        $sql = "INSERT INTO cartable(ModelID) VALUES ('$modelid')";
-        if ($conn->query($sql) === TRUE)
+        
+        $sql = "INSERT INTO cartable(ModelID,City) VALUES ('$modelid','$city')";
+        if ($conn->query($sql) === TRUE){
           $kaan = TRUE;
+          $_SESSION["modelid"] = $modelid;
+        }
+          
         else
           $kaan = FALSE;
       }
     }
     if (isset($_POST['listcar'])) {
       $ghost = TRUE;
-
-      $modelid = $_POST['flexRadioDefault'];
-      $_SESSION["modelid"] = $modelid;
+      if ((isset($_POST["flexRadioDefault"]))) {
+        $modelid = $_POST['flexRadioDefault'];
+        $_SESSION["modelid"] = $modelid;
+        $ghost = TRUE;
+    }
+    else{
+      $ghost = FALSE;
 
     }
+    if ($_POST["city"] == 'Choose...') {
+      
+      $_SESSION["citycheck"] = 0;
+    } else {
+      $city = test_input($_POST["city"]);
+      $_SESSION["carcity"] = $city;
+      $_SESSION["citycheck"] = 1;
+    }
+    
 
+    }
+    
+   
+
+    
 
     if ($kaan == TRUE) {
 
@@ -122,7 +160,7 @@ if (!isset($_SESSION)) {
                     <ul class="list-group list-group-flush">
                     <li class="list-group-item">' . $row["CarType"] . '</li>
                     <li class="list-group-item">' . $row["Fuel"] . '</li>
-                    <li class="list-group-item">' . $row["CarSize"] . '   <i class="fa-solid fa-user"></i></li>
+                    <li class="list-group-item">' . $row["CarSize"] . '   </li>
                     
                     </ul>
   
@@ -162,7 +200,7 @@ if (!isset($_SESSION)) {
   
               
                               <div class="form-chec mt-3 ml-4">
-               <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value = "' . $row["ModelID"] . '">
+               <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault" value = "' . $row["ModelID"] . '">
                <label class="form-check-label" for="flexRadioDefault1">
                  ' . $row["Price"] . '
                </label>
@@ -181,10 +219,28 @@ if (!isset($_SESSION)) {
     }
 
     ?>
-    <div>
+    <div class="col-10 m-auto mt-5">
+    <div class="col-4 m-auto " >
+    <label for="state" class="form-label mb-4">City</label>
+            <select id="city" name="city" class="form-select" value="<?php echo isset($_POST["city"]) ? $_POST["city"] : ''; ?>">
+              <option selected>Choose...</option>
+              <option>Tokyo</option>
+              <option>Paris</option>
+              <option>Venice</option>
+              <option>New York</option>
+            </select>
 
-      <input type="submit" class="btn btn-outline-success col-3 mr-4" name="addcar" value="Add Car For Selected Model">
-      <input type="submit" class="btn btn-outline-danger col-3 ml-4" name="listcar" value="List Cars For Selected Model">
+    </div>
+            <div class="mt-5">
+            <input type="submit" class="btn btn-outline-success col-3 mr-4" name="addcar" value="Add Car">
+            <input type="submit" class="btn btn-outline-danger col-3 ml-4" name="listcar" value="List Cars For Selected Model">
+
+            </div>
+           
+
+            
+      
+      
 
     </div>
 

@@ -63,21 +63,21 @@
     }
     
 
-    if (empty($_POST["type"])) {
+    if ($_POST["type"] == 'Choose...') {
       $typeErr = "Type is required";
       $kaan = FALSE;
     } else {
       $type = test_input($_POST["type"]);
     }
 
-    if (empty($_POST["fuel"])) {
+    if ($_POST["fuel"] == 'Choose...') {
       $fuelErr = "Fuel is required";
       $kaan = FALSE;
     } else {
       $fuel = test_input($_POST["fuel"]);
     }
 
-    if (empty($_POST["size"])) {
+    if ($_POST["size"] == 'Choose...') {
       $sizeErr = "Size is required";
       $kaan = FALSE;
     } else {
