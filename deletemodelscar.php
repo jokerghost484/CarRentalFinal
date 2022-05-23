@@ -1,7 +1,8 @@
 <?php
-if (!isset($_SESSION)) {
-  session_start();
-}
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,7 @@ if (!isset($_SESSION)) {
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancel Reservation</title>
+  <title>Update Car</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
@@ -23,39 +24,51 @@ if (!isset($_SESSION)) {
 <body>
 <?php include("navbaradmin.php"); ?>
 
+
 <?php
 
-  $servername = "localhost";
-  $username = "root";
-  $password = "password";
-  $dbname = "carweb";
+$servername = "localhost";
+$username = "root";
+$password = "password";
+$dbname = "carweb";
 
-  // Create connection
-  $conn = mysqli_connect($servername, $username, null, $dbname);
-  // Check connection
-  if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-  }
+// Create connection
+$conn = mysqli_connect($servername, $username, null, $dbname);
+// Check connection
+if (!$conn) {
+  die("Connection failed: " . mysqli_connect_error());
+}
 
-  ?>
+?>
 
 <?php 
-  $kaan = FALSE;
+  $carid = $caridErr = "";
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $kaan = TRUE;
+    
+    
+    if (isset($_POST['deletecar'])) {
       
-      if (isset($_POST['deleterev'])) {
+        $kaan = TRUE;
+        if ((isset($_POST["flexRadioDefault"]))) {
+          $carid = $_POST['flexRadioDefault'];
           $kaan = TRUE;
-          $reservationid = $_POST['flexRadioDefault'];
-          $sql = "DELETE FROM reservationtable WHERE ReservationID='$reservationid'";
       }
+      else{
+        $kaan = FALSE;
 
-      if ($conn->query($sql) === TRUE) {
+      }
+        
+        $sql = "DELETE FROM cartable WHERE CarID ='$carid'";
+    }
+    if ($conn->query($sql) === TRUE) {
         if($kaan==TRUE){
-          echo "<script> location.href='cancel.php'; </script>";
+          echo "<script> location.href='deletemodelscar.php'; </script>";
         }
         
       }
+    
       
       
   }
@@ -73,10 +86,8 @@ if (!isset($_SESSION)) {
   
   ?>
 
-  
 
-
-  <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 
   <div class="container mt-5">
       <div class="row">
@@ -86,19 +97,29 @@ if (!isset($_SESSION)) {
         <div class="col-9">
           <div class="card mt-5">
             <div class="card-header">
-              Bookings
+              <?php 
+              $modelid = $_SESSION['modelid'];
+              $title = "SELECT CONCAT(BranchName, ' ', CarName) AS Model FROM carmodeltable WHERE ModelID = $modelid";
+              $res = $conn->query($title);
+              if ($res->num_rows > 0) {
+                while ($row = $res->fetch_assoc()) {
+              echo ' '.$row["Model"].' Cars  ';
+            }
+          }
+              ?>
             </div>
             <ul class="list-group list-group-horizontal">
               <li class="list-group-item col-2">Option</li>
-              <li class="list-group-item col-2">CarID</li>
-              <li class="list-group-item col-4">CustomerEmail</li>
-              <li class="list-group-item col-2">PickUpDay</li>
-              <li class="list-group-item col-2">DropOffDay</li>
+              <li class="list-group-item col-2">CarNumber</li>
+              <li class="list-group-item col-2">Fuel</li>
+              <li class="list-group-item col-2">Type</li>  
+              <li class="list-group-item col-2">Size</li>
+              <li class="list-group-item col-2">Price</li>
 
             </ul>
             <?php
-            $email = $_SESSION['email'];
-            $sql = "SELECT * FROM reservationtable WHERE CustomerEmail='$email'";
+            $modelid = $_SESSION['modelid'];
+            $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID FROM cartable c,carmodeltable m WHERE m.ModelID =$modelid ";
             $result = $conn->query($sql);
 
 
@@ -117,17 +138,19 @@ if (!isset($_SESSION)) {
             <li class="list-group-item col-2">
 
               <div class="form-chec mt-3 ml-4">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="' . $row["ReservationID"] . '">
- <label class="form-check-label" for="flexRadioDefault1">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault" value="' . $row["CarID"] . '">
+ <label class="form-check-label" for="flexRadioDefault">
    
  </label> 
 
 </li>
                 
-            <li class="list-group-item col-2">' . $row["CarID"] . '</li>
-            <li class="list-group-item col-4">' . $row["CustomerEmail"] . '</li>
-            <li class="list-group-item col-2">' . $row["Pickupday"] . '</li>
-            <li class="list-group-item col-2">' . $row["Dropoffday"] . '</li>
+            <li class="list-group-item col-2">' . $row["CarNumber"] . '</li>
+            <li class="list-group-item col-2">' . $row["CarType"] . '</li>
+            <li class="list-group-item col-2">' . $row["Fuel"] . '</li>
+            <li class="list-group-item col-2">' . $row["CarSize"] . '</li>
+            <li class="list-group-item col-2">' . $row["Price"] .'$</li>
+            
             
             
           </ul>';
@@ -137,7 +160,8 @@ if (!isset($_SESSION)) {
 
             ?>
             <div class="Cancel-button mx-auto pt-2 pb-2">
-              <input type="submit" class="btn btn-outline-danger " name="deleterev" value="Delete">
+            <input type="submit" class="btn btn-outline-danger " name="deletecar" value="Delete">
+              
             </div>
 
           </div>
@@ -148,6 +172,7 @@ if (!isset($_SESSION)) {
       </div>
     </div>
   </form>
+
 
 
   <footer>

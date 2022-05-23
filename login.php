@@ -60,7 +60,7 @@ if (!$conn) {
     }
     
     if($kaan ==TRUE){
-      $sql = "SELECT CustomerPassword,CustomerEmail,CustomerName FROM customertable WHERE CustomerEmail='$email'";
+      $sql = "SELECT * FROM customertable WHERE CustomerEmail='$email'";
       $result = $conn->query($sql);
       
         

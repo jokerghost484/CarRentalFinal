@@ -22,25 +22,30 @@ ManagerAboutMe		TEXT			NOT NULL,
 PRIMARY KEY (ManagerID)
 );
 
-CREATE TABLE ReceiptTable(
-ReceiptID		INT		AUTO_INCREMENT,
-NameOnCard		VARCHAR(40)		NOT NULL,
-CardNumber		VARCHAR(16)		NOT NULL,
-Expiration 		VARCHAR(5)		NOT NULL,
-CVV				VARCHAR(3)		NOT NULL,
-PRIMARY KEY(ReceiptID)
-);
 
-CREATE TABLE CarTable(
-CarID	INT		AUTO_INCREMENT,
+
+CREATE TABLE CarModelTable(
+ModelID	INT		AUTO_INCREMENT,
+BranchName	VARCHAR(20)		NOT NULL,
 CarName 	VARCHAR(20)		NOT NULL,
 CarType		VARCHAR(15)		NOT NULL,
 Fuel		VARCHAR(15)		NOT NULL,
-Passenger	INT				NOT NULL,
-Price		VARCHAR(10)				NOT NULL,
+CarSize		VARCHAR(10)		NOT NULL,
+Price		INT				NOT NULL,
 CarImage	longblob,
-PRIMARY KEY (CarID)
+PRIMARY KEY (ModelID)
 );
+
+CREATE TABLE cartable(
+CarLetter	char(1)		DEFAULT 'C',
+CarID	INT		AUTO_INCREMENT,
+ModelID		INT		NOT NULL,
+CarStatus		INT		DEFAULT 1,
+FOREIGN KEY(ModelID) REFERENCES carmodeltable(ModelID) ON DELETE CASCADE ON UPDATE CASCADE,
+PRIMARY KEY(CarID,CarLetter)
+);
+
+
 
 CREATE TABLE reservationtable(
 ReservationID INT AUTO_INCREMENT,
@@ -51,11 +56,19 @@ Dropoffday	DATE	NOT NULL,
 PRIMARY KEY(ReservationID),
 FOREIGN KEY(CarID) REFERENCES cartable(CarID) ON DELETE CASCADE ON UPDATE CASCADE
 );
-/*
-Planned tables but could not use due to time
-*/
-CREATE TABLE team;
-CREATE TABLE cart;
-CREATE TABLE login;
-CREATE TABLE customercard;
 
+CREATE TABLE ReceiptTable(
+ReceiptID		INT		AUTO_INCREMENT,
+NameOnCard		VARCHAR(40)		NOT NULL,
+CardNumber		VARCHAR(16)		NOT NULL,
+Expiration 		VARCHAR(5)		NOT NULL,
+CVV				VARCHAR(3)		NOT NULL,
+PRIMARY KEY(ReceiptID)
+);
+
+CREATE TABLE messagetable(
+MessageID	INT		AUTO_INCREMENT,
+MessageEmail	VARCHAR(40)		NOT NULL,
+Message		TEXT		NOT NULL,
+PRIMARY KEY(MessageID)
+)

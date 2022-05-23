@@ -15,13 +15,12 @@ if (!isset($_SESSION)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/e63db42066.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-<?php include("navbaradmin.php"); ?>
+    <?php include("navbaradmin.php"); ?>
 
 
 
@@ -43,27 +42,32 @@ if (!isset($_SESSION)) {
     ?>
 
 
+    <?php
 
-<?php
+    $modelid = $modelidErr = "";
 
-
-    $kaan = FALSE;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $carid = test_input($_POST['flexRadioDefault']);
-        if (isset($_POST['cardelete'])) {
-            $kaan = TRUE;
-            
-            $carid = $_POST['flexRadioDefault'];
-            $sql = "DELETE FROM cartable WHERE CarID ='$carid'";
-        }
-        if ($conn->query($sql) === TRUE) {
-            if($kaan==TRUE){
-              echo "<script> location.href='deletecar.php'; </script>";
+        $kaan = TRUE;
+
+
+        if (isset($_POST['modelselect'])) {
+            if ((!isset($_POST["flexRadioDefault"]))) {
+                $modelidErr = "RadioButton is required";
+                $kaan = FALSE;
+            } else {
+                $modelid = test_input($_POST["flexRadioDefault"]);
+                $modelid = $_POST['flexRadioDefault'];
+                $_SESSION["modelid"] = $modelid;
             }
-            
-          }
-        
+        } else {
+            $kaan = FALSE;
+        }
+
+        if ($kaan == TRUE) {
+
+            echo "<script> location.href='deletemodelscar.php'; </script>";
+        }
     }
 
     function test_input($data)
@@ -75,59 +79,40 @@ if (!isset($_SESSION)) {
     }
 
 
-    
+
     ?>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-family: Merriweather, serif" id="exampleModalLabel">Delete Car
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" style="font-family: Merriweather, serif">
-                    Are you sure about this? You are going to delete this car from our system. You can't undo this
-                    process.
-                </div>
-                <div class="modal-footer" style="font-family: Merriweather, serif">
 
-                    <a class="btn btn-outline-danger" href="admin.php">Yes</a>
-                    <a class="btn btn-outline-info" href="deletecar.php">No</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 
 
         <?php
-        $sql = "SELECT * FROM cartable ";
+        $sql = "SELECT * FROM carmodeltable ";
         $result = $conn->query($sql);
-    
-    
-    
-    
+
+
+
+
         if ($result->num_rows == 0) {
             $kaan = FALSE;
         } else if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            
-            echo '<div class="container mt-5">
+            while ($row = $result->fetch_assoc()) {
+
+                echo '<div class="container mt-5">
             <div class="row ">
                 <div class="col-sm-4 mt-5">
                     <div class="card" style="width: 18rem;">
                         <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
                         <div class="card-body">
+                        <h4 class="card-title">' . $row["BranchName"] . '</h4>
                             <h5 class="card-title">' . $row["CarName"] . '</h5>
-                            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
                         </div>
                         <ul class="list-group list-group-flush">
                         <li class="list-group-item">' . $row["CarType"] . '</li>
                         <li class="list-group-item">' . $row["Fuel"] . '</li>
-                        <li class="list-group-item">' . $row["Passenger"] . '   <i class="fa-solid fa-user"></i></li>
+                        <li class="list-group-item">' . $row["CarSize"] . '   <i class="fa-solid fa-user"></i></li>
                         
                         </ul>
       
@@ -136,7 +121,7 @@ if (!isset($_SESSION)) {
                 <div class="col-sm-8 mt-5">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title"> Features of Car</h5>
+                            <h5 class="card-title"> Services </h5>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item" style="text-align: left;">
                                     <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
@@ -167,7 +152,7 @@ if (!isset($_SESSION)) {
       
                   
                                   <div class="form-chec mt-3 ml-4">
-                   <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value = "' . $row["CarID"] . '">
+                   <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault" value = "' . $row["ModelID"] . '">
                    <label class="form-check-label" for="flexRadioDefault1">
                      ' . $row["Price"] . '
                    </label>
@@ -182,16 +167,16 @@ if (!isset($_SESSION)) {
                   </div>
               </div>
           </div>';
-            
-            
+            }
         }
-    }
-    
-    ?>
-    <input type="submit" name="cardelete" value="DeleteCar">
-        </form>
 
-   
+        ?>
+        <div class="Cancel-button mx-auto pt-2 pb-2">
+            <input type="submit" class="btn btn-outline-danger " name="modelselect" value="List Car Models For Delete">
+        </div>
+    </form>
+
+
     <footer>
         <div class="footer">
             <footer>
@@ -214,12 +199,9 @@ if (!isset($_SESSION)) {
             </footer>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>
