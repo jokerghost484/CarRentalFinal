@@ -46,20 +46,43 @@ if (!isset($_SESSION)) {
     $kaan = FALSE;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $carid = test_input($_POST['flexRadioDefault']);
+        
         if (isset($_POST['select'])) {
             $kaan = TRUE;
-            $carid = $_POST['flexRadioDefault'];
-            $_SESSION["carid"] = $carid;
+            if ((isset($_POST["flexRadioDefault"]))) {
+                $modelid = $_POST['flexRadioDefault'];
+                
+            }
+            else{
+              $kaan = FALSE;
+        
+            }
+            $c = $_SESSION["c"];
+            $pick = $_SESSION["pickupday"];
+            $drop = $_SESSION["dropoffday"];
+            
+            
+            $sql = "SELECT CarID FROM cartable WHERE CarID NOT IN (SELECT r.CarID OR a.CarID From reservationtable r,carttable a WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') AND ModelID = '$modelid' AND City = '$c' ) LIMIT 1";
+            $result = $conn->query($sql);
+            if ($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                  $_SESSION["carid"] = $row["CarID"];
+                }
+              } 
+            
+           
         }
         if ($kaan == TRUE) {
             if($_SESSION["status"] == 1){
-                $customeremail = $_SESSION["email"];
+                
+
+
+                $customerid = $_SESSION["customerid"];
                 $carid = $_SESSION["carid"];
                 $pickupday = $_SESSION["pickupday"];
                 $dropoffday = $_SESSION["dropoffday"];
     
-                $sql = "INSERT INTO reservationtable(CustomerEmail, CarID, Pickupday, Dropoffday) VALUES ('$customeremail','$carid','$pickupday','$dropoffday')";
+                $sql = "INSERT INTO carttable(CustomerID, CarID, Pickupday, Dropoffday) VALUES ('$customerid','$carid','$pickupday','$dropoffday')";
                 if($conn->query($sql) === TRUE)
                     $kaan =TRUE;
                 else
@@ -83,99 +106,110 @@ if (!isset($_SESSION)) {
         $data = htmlspecialchars($data);
         return $data;
     }
-    $pick = $_SESSION["pickupday"];
-    $drop = $_SESSION["dropoffday"];
-    $sql = "SELECT * FROM cartable WHERE CarID NOT IN (SELECT CarID From reservationtable WHERE Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  ) ";
-    $result = $conn->query($sql);
+    
+    
 
-
-
-
-    if ($result->num_rows == 0) {
-        $kaan = FALSE;
-    } else if ($result->num_rows > 0) {
     ?>
 
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 
 
-        <?php
-        while ($row = $result->fetch_assoc()) {
+<?php
 
-            echo '<div class="container mt-5">
-      <div class="row ">
-          <div class="col-sm-4 mt-5">
-              <div class="card" style="width: 18rem;">
-                  <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
-                  <div class="card-body">
-                      <h5 class="card-title">' . $row["CarName"] . '</h5>
-                      <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                  <li class="list-group-item">' . $row["CarType"] . '</li>
-                  <li class="list-group-item">' . $row["Fuel"] . '</li>
-                  <li class="list-group-item">' . $row["Passenger"] . '   <i class="fa-solid fa-user"></i></li>
-                  
-                  </ul>
-
-              </div>
-          </div>
-          <div class="col-sm-8 mt-5">
-              <div class="card">
-                  <div class="card-body">
-                      <h5 class="card-title"> Features of Car</h5>
-                      <ul class="list-group list-group-flush">
-                          <li class="list-group-item" style="text-align: left;">
-                              <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                              ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
-                              inventore maiores.
-                          </li>
-                          <li class="list-group-item" style="text-align: left;">
-                              <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                              ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
-                          </li>
-                          <li class="list-group-item" style="text-align: left;">
-                              <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                              ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
-                          </li>
-                          <li class="list-group-item" style="text-align: left;" >
-                              <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                              ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
-                          </li>
-                          <li class="list-group-item" style="text-align: left;">
-                              <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
-                              ipsum dolor sit amet.
-                          </li>
-                          <li class="list-group-item" style="text-align: left;">
-                              <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
-                              ipsum.
-                          </li>
+$pick = $_SESSION["pickupday"];
+$drop = $_SESSION["dropoffday"];
+$c = $_SESSION["c"];
 
 
-            
-                            <div class="form-chec mt-3 ml-4">
-             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value = "' . $row["CarID"] . '">
-             <label class="form-check-label" for="flexRadioDefault1">
-               ' . $row["Price"] . '
-             </label>
+
+//$sql = "SELECT * FROM cartable WHERE CarID NOT IN (SELECT CarID From reservationtable WHERE Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  ) ";
+$sql = "SELECT DISTINCT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price FROM cartable c,carmodeltable m WHERE c.CarID NOT IN (SELECT r.CarID OR a.CarID From reservationtable r,carttable a WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') ) AND c.City ='$c' ";
+$result = $conn->query($sql);
+
+
+
+
+if ($result->num_rows == 0) {
+    $kaan = FALSE;
+} else if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+
+        echo '<div class="container mt-5">
+    <div class="row ">
+        <div class="col-sm-4 mt-5">
+            <div class="card" style="width: 18rem;">
+                <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
+                <div class="card-body">
+                <h4 class="card-title">' . $row["BranchName"] . '</h4>
+                    <h5 class="card-title">' . $row["CarName"] . '</h5>
                 </div>
-                           
-                            
-                             
-              
-                        </ul>
-                    </div>
-                </div>
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item">' . $row["CarType"] . '</li>
+                <li class="list-group-item">' . $row["Fuel"] . '</li>
+                <li class="list-group-item">' . $row["CarSize"] . '   <i class="fa-solid fa-user"></i></li>
+                
+                </ul>
+
             </div>
         </div>
-    </div>';
-        }
+        <div class="col-sm-8 mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"> Services </h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" style="text-align: left;">
+                            <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                            ipsum dolor sit amet consectetur adipisicing elit. Culpa sed earum quia corrupti
+                            inventore maiores.
+                        </li>
+                        <li class="list-group-item" style="text-align: left;">
+                            <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                            ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, sequi.
+                        </li>
+                        <li class="list-group-item" style="text-align: left;">
+                            <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                            ipsum dolor, sit amet consectetur adipisicing elit. Aliquid.
+                        </li>
+                        <li class="list-group-item" style="text-align: left;">
+                            <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                            ipsum dolor sit amet, consectetur adipisicing elit. Asperiores quas cum architecto?
+                        </li>
+                        <li class="list-group-item" style="text-align: left;">
+                            <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem
+                            ipsum dolor sit amet.
+                        </li>
+                        <li class="list-group-item" style="text-align: left;">
+                            <i class="fa-regular fa-circle-check fa-xl" style="color: rgb(11, 148, 11);"></i> Lorem,
+                            ipsum.
+                        </li>
+
+
+          
+                          <div class="form-chec mt-3 ml-4">
+           <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault" value = "' . $row["ModelID"] . '">
+           <label class="form-check-label" for="flexRadioDefault1">
+             ' . $row["Price"] . '
+           </label>
+              </div>
+                         
+                          
+                           
+            
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>';
     }
+}
 
+?>
+<div class="Cancel-button mx-auto pt-2 pb-2">
+    <input type="submit" class="btn btn-outline-danger " name="select" value="Confirm">
+</div>
+</form>
 
-        ?>
-        <input type="submit" name="select" value="Confirm">
-        </form>
 
 
 

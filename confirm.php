@@ -122,7 +122,24 @@
 
 <?php
   $filler = $_SESSION["carid"];
-  $sql = "SELECT * FROM cartable WHERE CarID = $filler ";
+  $pick = $_SESSION["pickupday"];
+  $drop = $_SESSION["dropoffday"];
+  $sql ="SELECT DATEDIFF('$drop', '$pick') AS DateDiff";
+  $result = $conn->query($sql);
+
+
+
+  if ($result->num_rows == 0) {
+  } else if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()){
+      $daycount = $row["DateDiff"];
+    }
+ }
+ 
+
+
+  
+  $sql = "SELECT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price FROM cartable c,carmodeltable m WHERE CarID = $filler ";
   $result = $conn->query($sql);
 
 
@@ -138,13 +155,14 @@
           <div class="card" style="width: 18rem;">
             <img src="images/sports-car-background-hd-1920x1080-329208.jpg" class="card-img-top" alt="peugeot">
             <div class="card-body">
-              <h5 class="card-title">'.$row["CarName"].'</h5>
-              <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">'.$row["CarType"].'</li>
-              <li class="list-group-item">'.$row["Fuel"].'</li>
-              <li class="list-group-item">'.$row["Passenger"].' <i class="fa-solid fa-user"></i></li>
+            <h4 class="card-title">' . $row["BranchName"] . '</h4>
+            <h5 class="card-title">' . $row["CarName"] . '</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+        <li class="list-group-item">' . $row["CarType"] . '</li>
+        <li class="list-group-item">' . $row["Fuel"] . '</li>
+        <li class="list-group-item">' . $row["CarSize"] . '   <i class="fa-solid fa-user"></i></li>
+        
             </ul>
   
           </div>
@@ -180,7 +198,7 @@
                   ipsum.
                 </li>
                 <li class="list-group-item" style="text-align: center;font-size: 30px;">
-                  $350
+                ' . $row["Price"] * $daycount . '$
                 </li>
   
   

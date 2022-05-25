@@ -56,30 +56,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
   
 
-  if (empty($_POST["pickup"])) {
+  if ($_POST["pickup"] == 'PCity') {
     $kaan = FALSE;
   } else {
     $pickup = test_input($_POST["pickup"]);
-    // check if name only contains letters and whitespace
-    if (!preg_match("/^[a-zA-Z-' ]*$/", $pickup)) { 
-      $kaan = FALSE;
-    }
+    
   }
 
-  if (empty($_POST["dropoff"])) {
+  if ($_POST["dropoff"] == 'DCity') {
     $kaan = FALSE;
   } else {
     $dropoff = test_input($_POST["dropoff"]);
-    // check if name only contains letters and whitespace
-    if (!preg_match("/^[a-zA-Z-' ]*$/", $dropoff)) { 
-      $kaan = FALSE;
-    }
+    
+    
   }
+  
+  if($dropoff != $pickup){
+    $kaan = FALSE;
+  }
+  
+  
+  
 
   if (empty($_POST["pickupday"])) {
     $kaan = FALSE;
   } else {
     $pickupday = test_input($_POST["pickupday"]);
+    
   }
 
 
@@ -95,7 +98,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   else{
     $_SESSION["pickupday"] = $pickupday;
     $_SESSION["dropoffday"] = $dropoffday;
+    $_SESSION["c"] = $pickup;
   }
+ 
 
   if ($kaan == TRUE) {
     echo "<script> location.href='carpage.php'; </script>";
