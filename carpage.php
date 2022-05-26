@@ -62,7 +62,20 @@ if (!isset($_SESSION)) {
             $drop = $_SESSION["dropoffday"];
             
             
-            $sql = "SELECT CarID FROM cartable WHERE CarID NOT IN (SELECT r.CarID OR a.CarID From reservationtable r,carttable a WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') AND ModelID = '$modelid' AND City = '$c' ) LIMIT 1";
+            $sql = "SELECT CarID FROM cartable WHERE  ModelID = '$modelid' AND City = '$c' AND CarID NOT IN (SELECT r.CarID  From reservationtable r
+            WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  OR
+             DATE('$pick') BETWEEN r.Pickupday AND r.Dropoffday OR DATE('$drop') BETWEEN r.Pickupday AND r.Dropoffday
+
+           UNION 
+
+           SELECT a.CarID FROM carttable a
+           WHERE a.Pickupday 
+           BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') 
+           OR DATE('$pick') BETWEEN a.Pickupday AND a.Dropoffday OR DATE('$drop') BETWEEN a.Pickupday AND a.Dropoffday
+           
+            ) LIMIT 1 ";
+           
+           
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
@@ -123,7 +136,7 @@ $c = $_SESSION["c"];
 
 
 //$sql = "SELECT * FROM cartable WHERE CarID NOT IN (SELECT CarID From reservationtable WHERE Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  ) ";
-$sql = "SELECT DISTINCT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price FROM cartable c,carmodeltable m WHERE c.CarID NOT IN (SELECT r.CarID OR a.CarID From reservationtable r,carttable a WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') ) AND c.City ='$c' ";
+$sql = "SELECT DISTINCT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price,m.CarImage FROM cartable c,carmodeltable m WHERE c.City = '$c' AND c.ModelID = m.ModelID AND c.CarID NOT IN (SELECT r.CarID OR a.CarID From reservationtable r,carttable a WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') )  ";
 $result = $conn->query($sql);
 
 
@@ -138,7 +151,7 @@ if ($result->num_rows == 0) {
     <div class="row ">
         <div class="col-sm-4 mt-5">
             <div class="card" style="width: 18rem;">
-                <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
+                <img src="images/'.$row["CarImage"] .'" class="card-img-top" alt="mercedes">
                 <div class="card-body">
                 <h4 class="card-title">' . $row["BranchName"] . '</h4>
                     <h5 class="card-title">' . $row["CarName"] . '</h5>
@@ -146,7 +159,7 @@ if ($result->num_rows == 0) {
                 <ul class="list-group list-group-flush">
                 <li class="list-group-item">' . $row["CarType"] . '</li>
                 <li class="list-group-item">' . $row["Fuel"] . '</li>
-                <li class="list-group-item">' . $row["CarSize"] . '   <i class="fa-solid fa-user"></i></li>
+                <li class="list-group-item">' . $row["CarSize"] . '  </li>
                 
                 </ul>
 
@@ -188,7 +201,7 @@ if ($result->num_rows == 0) {
                           <div class="form-chec mt-3 ml-4">
            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault" value = "' . $row["ModelID"] . '">
            <label class="form-check-label" for="flexRadioDefault1">
-             ' . $row["Price"] . '
+             ' . $row["Price"] . '$
            </label>
               </div>
                          

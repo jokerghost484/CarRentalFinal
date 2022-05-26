@@ -48,7 +48,7 @@
 
 
       <div class="col mt-5 " style="text-align: center;">
-        <a class="btn btn-outline-secondary" href="addcar.php">Add Car</a>
+        <a class="btn btn-outline-secondary" href="addcar.php">Add Model</a>
       </div>
       <div class="col mt-5" style="text-align: center;">
         <a class="btn btn-outline-secondary" href="deletecar.php">Delete Car</a>

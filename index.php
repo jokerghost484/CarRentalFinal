@@ -48,6 +48,15 @@ $pickup =  $dropoff = $pickupday = $dropoffday = "";
 $pickupErr = $dropdownErr =   "";
 
 
+$customerid = $_SESSION["customerid"];
+$sql = "DELETE FROM carttable WHERE CustomerID = '$customerid' ";
+        if ($conn->query($sql) === TRUE) {
+          
+        } else {
+          
+        }
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $kaan = TRUE;
@@ -114,6 +123,8 @@ function test_input($data)
   $data = htmlspecialchars($data);
   return $data;
 }
+
+
 
 ?>
 

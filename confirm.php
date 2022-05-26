@@ -1,8 +1,7 @@
 <?php
-    if(!isset($_SESSION)) 
-    { 
-        session_start(); 
-    } 
+if (!isset($_SESSION)) {
+  session_start();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,15 +15,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://kit.fontawesome.com/e63db42066.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-<?php include("navbar.php"); ?>
+  <?php include("navbar.php"); ?>
 
-<?php
+  <?php
 
   $servername = "localhost";
   $username = "root";
@@ -41,11 +39,11 @@
   ?>
 
 
-<?php
-  
+  <?php
+
   $nameoncard =  $cardnumber = $expiration = $cvv  = "";
   $nameoncardErr = $cardnumberErr = $expirationErr = $cvvErr = "";
-  
+
 
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -78,17 +76,45 @@
     } else {
       $cvv = test_input($_POST["cvv"]);
     }
+    $customeridadd = $_SESSION["customerid"];
+
+    $filler = $_SESSION["carid"];
+    $pick = $_SESSION["pickupday"];
+  $drop = $_SESSION["dropoffday"];
+  $sql = "SELECT DATEDIFF('$drop', '$pick') AS DateDiff";
+  $result = $conn->query($sql);
+
+
+
+  if ($result->num_rows == 0) {
+  } else if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+      $daycount = $row["DateDiff"];
+    }
+  }
+    $sql = "SELECT m.Price FROM cartable c,carmodeltable m WHERE CarID = '$filler' AND c.ModelID = m.ModelID";
+  $result = $conn->query($sql);
+  if ($result->num_rows == 0) {
+    
+  } else if ($result->num_rows > 0) {
+
+    while ($row = $result->fetch_assoc()) {
+      $payment = $row["Price"] * $daycount;
+    }
+   }
+  
+
 
     if ($kaan == TRUE) {
-      $stmt = $conn->prepare("INSERT INTO receipttable (NameOnCard, CardNumber, Expiration, CVV)
-       VALUES (?, ?, ?, ?)");
-      $stmt->bind_param("ssss", $nameoncard, $cardnumber, $expiration, $cvv);
+      $stmt = $conn->prepare("INSERT INTO receipttable (CustomerID,NameOnCard, CardNumber, Expiration, CVV,Payment)
+       VALUES (?, ?, ?, ?,?,?)");
+      $stmt->bind_param("issssi", $customeridadd,$nameoncard, $cardnumber, $expiration, $cvv,$payment);
 
-      
+
       if (isset($_POST['nameoncard'])) {
         $nameoncard = $_POST["nameoncard"];
       }
-      
+
       if (isset($_POST['cardnumber'])) {
         $cardnumber = $_POST["cardnumber"];
       }
@@ -102,9 +128,41 @@
     }
 
     if ($kaan == TRUE) {
+      $filler = $_SESSION["carid"];
+      $sql = "SELECT * FROM carttable WHERE CarID = '$filler'";
+      $result = $conn->query($sql);
+
+      if ($result->num_rows > 0) {
+        // output data of each row
+        while ($row = $result->fetch_assoc()) {
+          $reservationidadd = $row["ReservationID"];
+          $customeridadd = $row["CustomerID"];
+          $caridadd = $row["CarID"];
+          $pickupdayadd = $row["Pickupday"];
+          $dropoffdayadd = $row["Dropoffday"];
+        }
+      }
+
+      $sql = "INSERT INTO reservationtable (ReservationID,CustomerID,CarID,Pickupday,Dropoffday) VALUES ('$reservationidadd','$customeridadd','$caridadd','$pickupdayadd','$dropoffdayadd' )";
+      if ($conn->query($sql) === TRUE) {
+        $kaan = TRUE;
+      } else {
+        $kaan = FALSE;
+      }
+      if($kaan == TRUE){
+        $sql = "DELETE FROM carttable WHERE CarID = '$caridadd' ";
+        if ($conn->query($sql) === TRUE) {
+          $kaan = TRUE;
+        } else {
+          $kaan = FALSE;
+        }
+      }
+    }
+    if ($kaan == TRUE) {
       echo "<script> location.href='bookings.php'; </script>";
     }
   }
+  
 
 
 
@@ -115,31 +173,31 @@
     $data = htmlspecialchars($data);
     return $data;
   }
-  
+
 
   ?>
 
 
-<?php
+  <?php
   $filler = $_SESSION["carid"];
   $pick = $_SESSION["pickupday"];
   $drop = $_SESSION["dropoffday"];
-  $sql ="SELECT DATEDIFF('$drop', '$pick') AS DateDiff";
+  $sql = "SELECT DATEDIFF('$drop', '$pick') AS DateDiff";
   $result = $conn->query($sql);
 
 
 
   if ($result->num_rows == 0) {
   } else if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()){
+    while ($row = $result->fetch_assoc()) {
       $daycount = $row["DateDiff"];
     }
- }
- 
+  }
 
 
-  
-  $sql = "SELECT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price FROM cartable c,carmodeltable m WHERE CarID = $filler ";
+
+
+  $sql = "SELECT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price,m.CarImage FROM cartable c,carmodeltable m WHERE CarID = '$filler' AND c.ModelID = m.ModelID";
   $result = $conn->query($sql);
 
 
@@ -147,13 +205,15 @@
   if ($result->num_rows == 0) {
     $kaan = FALSE;
   } else if ($result->num_rows > 0) {
-    
-    while ($row = $result->fetch_assoc()){
+
+    while ($row = $result->fetch_assoc()) {
+      
+
       echo '<div class="container mt-5">
       <div class="row ">
         <div class="col-sm-4 mt-5" style="font-family: Merriweather, serif">
           <div class="card" style="width: 18rem;">
-            <img src="images/sports-car-background-hd-1920x1080-329208.jpg" class="card-img-top" alt="peugeot">
+            <img src="images/' . $row["CarImage"] . '" class="card-img-top" alt="peugeot">
             <div class="card-body">
             <h4 class="card-title">' . $row["BranchName"] . '</h4>
             <h5 class="card-title">' . $row["CarName"] . '</h5>
@@ -215,11 +275,11 @@
 
 
 
-?>
- 
+  ?>
 
 
-  
+
+
 
 
 
@@ -255,7 +315,7 @@
             </div>
           </div>
           <div class="button12 pt-4">
-          <input class="btn btn-outline-dark mt-5" type="submit" name="Confirm" value="ConfirmPurchase">
+            <input class="btn btn-outline-dark mt-5" type="submit" name="Confirm" value="ConfirmPurchase">
           </div>
 
         </form>
@@ -270,9 +330,7 @@
 
   <?php include("footer.php"); ?>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>

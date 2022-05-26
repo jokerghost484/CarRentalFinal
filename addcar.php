@@ -39,8 +39,8 @@
     die("Connection failed: " . mysqli_connect_error());
   }
   // define variables and set to empty values
-  $branchname = $carname =  $quantity = $carid = $type = $fuel = $size =  $price = "";
-  $branchnameErr = $carnameErr =  $quantityErr = $caridErr = $typeErr = $fuelErr = $sizeErr =  $priceErr = "";
+  $branchname = $carname =  $quantity = $carid = $type = $fuel = $size =  $price = $ima = "";
+  $branchnameErr = $carnameErr =  $quantityErr = $caridErr = $typeErr = $fuelErr = $sizeErr =  $priceErr = $imaErr = "";
   
 
 
@@ -48,14 +48,14 @@
     $kaan = TRUE;
 
 
-    if (empty($_POST["branchname"])) {
+    if ($_POST["branchname"] == 'Choose...') {
       $branchnameErr = "Branchname is required";
       $kaan = FALSE;
     } else {
       $branchname = test_input($_POST["branchname"]);
     }
 
-    if (empty($_POST["carname"])) {
+    if ($_POST["carname"] == 'Choose...') {
       $carnameErr = "Carname is required";
       $kaan = FALSE;
     } else {
@@ -91,11 +91,18 @@
       $price = test_input($_POST["price"]);
     }
 
+    if ($_POST["ima"] == 'Image...') {
+      $imaErr = "Image is required";
+      $kaan = FALSE;
+    } else {
+      $ima = test_input($_POST["ima"]);
+    }
+
 
     if ($kaan == TRUE) {
-      $stmt = $conn->prepare("INSERT INTO carmodeltable (BranchName,CarName,CarType,Fuel,CarSize,Price)
-       VALUES (?, ?, ?, ?, ?,?)");
-      $stmt->bind_param("sssssi", $branchname,$carname, $type, $fuel, $size, $price);
+      $stmt = $conn->prepare("INSERT INTO carmodeltable (BranchName,CarName,CarType,Fuel,CarSize,Price,CarImage)
+       VALUES (?, ?, ?, ?, ?,?,?)");
+      $stmt->bind_param("sssssis", $branchname,$carname, $type, $fuel, $size, $price,$ima);
 
       if (isset($_POST['branchname'])) {
         $typbranchnamee = $_POST["branchname"];
@@ -120,7 +127,10 @@
       if (isset($_POST['price'])) {
         $price = $_POST["price"];
       }
-      
+      if (isset($_POST['ima'])) {
+        $ima = $_POST["ima"];
+      }
+
       $stmt->execute();
     }
 
@@ -160,12 +170,22 @@
             <h2>Create Car Profile </h2>
           </div>
           <div class="col-md-3" style="text-align: left;">
-            <label for="inputCarName" class="form-label">Branch Name</label>
-            <input type="name" class="form-control" id="branchname" name="branchname"  value="<?php echo isset($_POST["branchname"]) ? $_POST["branchname"] : ''; ?>">
+            <label for="inputName" class="form-label mb-4">Branch Name</label>
+            <select class="form-select" id="branchname" name="branchname"  value="<?php echo isset($_POST["branchname"]) ? $_POST["branchname"] : ''; ?>">
+            <option selected>Choose...</option>
+              <option>Opel</option>
+              <option>Peugeot</option>
+              <option>Honda</option>
+              </select>
           </div>
           <div class="col-md-3" style="text-align: left;">
-            <label for="inputCarName" class="form-label">Car Name</label>
-            <input type="name" class="form-control" id="carname" name="carname"  value="<?php echo isset($_POST["carname"]) ? $_POST["carname"] : ''; ?>">
+            <label for="inputCarName" class="form-label mb-4">Car Name</label>
+            <select  class="form-select" id="carname" name="carname"  value="<?php echo isset($_POST["carname"]) ? $_POST["carname"] : ''; ?>">
+            <option selected>Choose...</option>
+              <option>Astra</option>
+              <option>3008</option>
+              <option>Civic</option>
+              </select>
           </div>
           
           <div class="col-md-3" style="text-align: left;">
@@ -200,6 +220,16 @@
           <div class="col-md-3" style="text-align: left;">
             <label for="inputPrice" class="form-label">Price</label>
             <input type="name" class="form-control" id="price" placeholder="$" name="price"  value="<?php echo isset($_POST["price"]) ? $_POST["price"] : ''; ?>">
+          </div>
+          <div class="col-md-3 mt-auto" style="text-align: left;">
+            <label for="inputima" class="form-label mb-4">Image</label>
+            <select id="ima" class="form-select" name="ima"  value="<?php echo isset($_POST["ima"]) ? $_POST["ima"] : ''; ?>">
+              <option selected>Image...</option>
+              <option>honda.jpg</option>
+              <option>Small</option>
+              <option>Medium</option>
+              
+            </select>
           </div>
           
 

@@ -100,24 +100,27 @@ if (!isset($_SESSION)) {
 
     <div class="container mt-5">
       <div class="row">
-        <div class="col">
-
-        </div>
-        <div class="col-9">
+        
+        <div class="col-12">
           <div class="card mt-5">
             <div class="card-header">
               Bookings
             </div>
             <ul class="list-group list-group-horizontal">
-              <li class="list-group-item col-2">Option</li>
-              <li class="list-group-item col-2">CarID</li>
-              <li class="list-group-item col-4">PickUpDay</li>
-              <li class="list-group-item col-4">DropOffDay</li>
+            <li class="list-group-item col-1">Option</li>
+              <li class="list-group-item col-3">Car Name</li>
+              <li class="list-group-item col-2">City</li>
+              <li class="list-group-item col-2">Pick Up Day</li>  
+              <li class="list-group-item col-2">Drop Off Day</li>
+              <li class="list-group-item col-2">Payment</li>
+              
 
             </ul>
             <?php
-            $email = $_SESSION['email'];
-            $sql = "SELECT * FROM reservationtable WHERE CustomerEmail='$email'";
+            $customerid = $_SESSION['customerid'];
+            $sql = "SELECT CONCAT(m.BranchName, ' ', m.CarName) AS Model,c.ModelID,r.CarID,r.Pickupday,r.Dropoffday,c.City,f.Payment,r.ReservationID  FROM reservationtable r,cartable c,carmodeltable m ,receipttable f
+            WHERE r.CustomerID='$customerid' AND m.ModelID = c.ModelID AND r.CarID = c.CarID AND r.CustomerID = f.CustomerID
+            GROUP BY r.ReservationID ";
             $result = $conn->query($sql);
 
 
@@ -133,7 +136,7 @@ if (!isset($_SESSION)) {
           
           
           <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-2">
+            <li class="list-group-item col-1">
 
               <div class="form-chec mt-3 ml-4">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="' . $row["ReservationID"] . '">
@@ -142,9 +145,12 @@ if (!isset($_SESSION)) {
  </label> 
 
 </li>
-            <li class="list-group-item col-2">' . $row["CarID"] . '</li>
-            <li class="list-group-item col-4">' . $row["Pickupday"] . '</li>
-            <li class="list-group-item col-4">' . $row["Dropoffday"] . '</li>
+
+            <li class="list-group-item col-3">' . $row["Model"] . '</li>
+            <li class="list-group-item col-2">' . $row["City"] . '</li>
+            <li class="list-group-item col-2">' . $row["Pickupday"] . '</li>
+            <li class="list-group-item col-2">' . $row["Dropoffday"] . '</li>
+            <li class="list-group-item col-2">' . $row["Payment"] . '$</li>
             
             
           </ul>';
@@ -159,9 +165,7 @@ if (!isset($_SESSION)) {
 
           </div>
         </div>
-        <div class="col">
-
-        </div>
+        
       </div>
     </div>
 

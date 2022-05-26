@@ -50,7 +50,7 @@
 
 
   <?php
-  $sql = "SELECT * FROM cartable ";
+  $sql = "SELECT * FROM carmodeltable ";
   $result = $conn->query($sql);
 
 
@@ -66,19 +66,22 @@
       }
       echo '<div class="col mt-4">
       <div class="card" style="width: 18rem;">
-        <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
+      <img src="images/'.$row["CarImage"] .'" class="card-img-top" alt="mercedes">
         <div class="card-body">
-          <h5 class="card-title">'.$row["CarName"].'</h5>
-          
+
+        <h4 class="card-title">' . $row["BranchName"] . '</h4>
+            <h5 class="card-title">' . $row["CarName"] . '</h5>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">'.$row["CarType"].'</li>
-          <li class="list-group-item">'.$row["Fuel"].'</li>
-          <li class="list-group-item">'.$row["Passenger"].'   <i class="fa-solid fa-user"></i></li>
-          <li class="list-group-item">'.$row["Price"].'</li>
+        <li class="list-group-item">' . $row["CarType"] . '</li>
+        <li class="list-group-item">' . $row["Fuel"] . '</li>
+        <li class="list-group-item">' . $row["CarSize"] . '   </li>
+        
+        </ul>
+
         </ul>
         <div class="card-body">
-          <a class="btn btn-outline-dark" href="bookform.php">Book</a>
+          <a class="btn btn-outline-dark" href="index.php">Book</a>
         </div>
       </div>
     </div>';

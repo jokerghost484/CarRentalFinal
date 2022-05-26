@@ -104,7 +104,7 @@ if (!isset($_SESSION)) {
             <div class="row ">
                 <div class="col-sm-4 mt-5">
                     <div class="card" style="width: 18rem;">
-                        <img src="images/mercedes-benz-background-1080p-362844.jpg" class="card-img-top" alt="mercedes">
+                        <img src="images/'.$row["CarImage"] .'" class="card-img-top" alt="mercedes">
                         <div class="card-body">
                         <h4 class="card-title">' . $row["BranchName"] . '</h4>
                             <h5 class="card-title">' . $row["CarName"] . '</h5>
