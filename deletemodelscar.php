@@ -119,7 +119,7 @@ if (!$conn) {
             </ul>
             <?php
             $modelid = $_SESSION['modelid'];
-            $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,c.CarStatus,c.City FROM cartable c,carmodeltable m WHERE m.ModelID =$modelid ";
+            $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,c.CarStatus,c.City FROM cartable c,carmodeltable m WHERE m.ModelID =$modelid AND m.ModelID = c.ModelID";
             $result = $conn->query($sql);
 
 
