@@ -97,6 +97,9 @@ if (!isset($_SESSION)) {
        if($ghost == TRUE){
         echo "<script> location.href='index.php'; </script>";
        }
+       if($ghost == false){
+        echo "<script> alert('You must logged in'); </script>";
+       }
   }
 
 

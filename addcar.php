@@ -183,7 +183,7 @@ if ($result->num_rows > 0) {
             <h2>Create Car Profile </h2>
           </div>
           <div class="col-md-3" style="text-align: left;">
-            <label for="inputName" class="form-label mb-4">Branch Name</label>
+            <label for="inputName" class="form-label mb-4">Model Name</label>
             <select class="form-select" id="branchname" name="branchname"  value="<?php echo isset($_POST["branchname"]) ? $_POST["branchname"] : ''; ?>">
             <option selected>Choose...</option>
               <option>Opel</option>
