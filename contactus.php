@@ -144,11 +144,11 @@ if (!isset($_SESSION)) {
         </div>
         <div class="mb-3 mt-5">
           <label for="exampleComment" class="form-label">Message</label>
-          <textarea class="form-control" id="exampleComment" rows="3" name="message" value="<?php echo isset($_POST["message"]) ? $_POST["message"] : ''; ?>"></textarea>
+          <textarea class="form-control" id="message" rows="3" name="message" value="<?php echo isset($_POST["message"]) ? $_POST["message"] : ''; ?>"></textarea>
         </div>
         <div class="row">
     <div class="col-sm-8"></div>
-    <div class="col-sm-4"><input class="btn btn-outline-info mt-5" type="submit" name="message" value="Send message"></div>
+    <div class="col-sm-4"><input class="btn btn-outline-info mt-5" type="submit" name="send" value="Send message"></div>
   </div>
   
         

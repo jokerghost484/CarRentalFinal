@@ -108,19 +108,22 @@ if (!isset($_SESSION)) {
             </div>
             <ul class="list-group list-group-horizontal">
             <li class="list-group-item col-1">Option</li>
-              <li class="list-group-item col-3">Car Name</li>
+              <li class="list-group-item col-2">Car Name</li>
               <li class="list-group-item col-2">City</li>
               <li class="list-group-item col-2">Pick Up Day</li>  
               <li class="list-group-item col-2">Drop Off Day</li>
-              <li class="list-group-item col-2">Payment</li>
+              <li class="list-group-item col-2">Booked Time</li>
+              <li class="list-group-item col-1">Payment</li>
               
 
             </ul>
             <?php
             $customerid = $_SESSION['customerid'];
-            $sql = "SELECT CONCAT(m.BranchName, ' ', m.CarName) AS Model,c.ModelID,r.CarID,r.Pickupday,r.Dropoffday,c.City,f.Payment,r.ReservationID  FROM reservationtable r,cartable c,carmodeltable m ,receipttable f
+            $sql = "SELECT CONCAT(m.BranchName, ' ', m.CarName) AS Model,c.ModelID,r.CarID,r.Pickupday,r.Dropoffday,c.City,r.Payment,r.ReservationID,r.ReservationTime  FROM reservationtable r,cartable c,carmodeltable m ,receipttable f
             WHERE r.CustomerID='$customerid' AND m.ModelID = c.ModelID AND r.CarID = c.CarID AND r.CustomerID = f.CustomerID
-            GROUP BY r.ReservationID ";
+            GROUP BY r.ReservationID 
+            ORDER BY r.ReservationTime ASC ";
+            
             $result = $conn->query($sql);
 
 
@@ -146,11 +149,12 @@ if (!isset($_SESSION)) {
 
 </li>
 
-            <li class="list-group-item col-3">' . $row["Model"] . '</li>
+            <li class="list-group-item col-2">' . $row["Model"] . '</li>
             <li class="list-group-item col-2">' . $row["City"] . '</li>
             <li class="list-group-item col-2">' . $row["Pickupday"] . '</li>
             <li class="list-group-item col-2">' . $row["Dropoffday"] . '</li>
-            <li class="list-group-item col-2">' . $row["Payment"] . '$</li>
+            <li class="list-group-item col-2">' . $row["ReservationTime"] . '</li>
+            <li class="list-group-item col-1">' . $row["Payment"] . '$</li>
             
             
           </ul>';

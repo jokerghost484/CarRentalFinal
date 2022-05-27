@@ -15,15 +15,14 @@ if (!isset($_SESSION)) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://kit.fontawesome.com/e63db42066.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-<?php include("navbaradmin.php"); ?>
+  <?php include("navbaradmin.php"); ?>
 
-<?php
+  <?php
 
   $servername = "localhost";
   $username = "root";
@@ -39,66 +38,67 @@ if (!isset($_SESSION)) {
 
   ?>
 
-<?php 
+  <?php
   $kaan = FALSE;
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-      
-      if (isset($_POST['deleterev'])) {
-          $kaan = TRUE;
-          $reservationid = $_POST['flexRadioDefault'];
-          $sql = "DELETE FROM reservationtable WHERE ReservationID='$reservationid'";
-      }
 
-      if ($conn->query($sql) === TRUE) {
-        if($kaan==TRUE){
-          echo "<script> location.href='cancel.php'; </script>";
-        }
-        
+    if (isset($_POST['deleterev'])) {
+      $kaan = TRUE;
+      $reservationid = $_POST['flexRadioDefault'];
+      $sql = "DELETE FROM reservationtable WHERE ReservationID='$reservationid'";
+    }
+
+    if ($conn->query($sql) === TRUE) {
+      if ($kaan == TRUE) {
+        echo "<script> location.href='cancel.php'; </script>";
       }
-      
-      
+    }
   }
 
   function test_input($data)
   {
-      $data = trim($data);
-      $data = stripslashes($data);
-      $data = htmlspecialchars($data);
-      return $data;
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
   }
-  
-  
-  
-  
+
+
+
+
   ?>
 
-  
+
 
 
   <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 
-  <div class="container mt-5">
+    <div class="container mt-5">
       <div class="row">
-        <div class="col">
 
-        </div>
-        <div class="col-9">
+        <div class="col-12">
           <div class="card mt-5">
             <div class="card-header">
               Bookings
             </div>
             <ul class="list-group list-group-horizontal">
-              <li class="list-group-item col-2">Option</li>
-              <li class="list-group-item col-2">CarID</li>
-              <li class="list-group-item col-4">CustomerEmail</li>
-              <li class="list-group-item col-2">PickUpDay</li>
-              <li class="list-group-item col-2">DropOffDay</li>
+              <li class="list-group-item col-1">Option</li>
+              <li class="list-group-item col-2">Car Name</li>
+              <li class="list-group-item col-1">City</li>
+              <li class="list-group-item col-1">Name</li>
+              <li class="list-group-item col-2">Pick Up Day</li>
+              <li class="list-group-item col-2">Drop Off Day</li>
+              <li class="list-group-item col-2">Book Time</li>
+              <li class="list-group-item col-1">Payment</li>
 
             </ul>
             <?php
-            $email = $_SESSION['email'];
-            $sql = "SELECT * FROM reservationtable WHERE CustomerEmail='$email'";
+            $customerid = $_SESSION['customerid'];
+            $sql = "SELECT CONCAT(m.BranchName, ' ', m.CarName) AS Model,c.ModelID,r.CarID,r.Pickupday,r.Dropoffday,c.City,r.Payment,r.ReservationID,r.ReservationTime,q.CustomerName FROM reservationtable r,cartable c,carmodeltable m ,receipttable f,customertable q
+            WHERE r.CustomerID='$customerid' AND m.ModelID = c.ModelID AND r.CarID = c.CarID AND r.CustomerID = f.CustomerID AND q.CustomerID = r.CustomerID
+            GROUP BY r.ReservationID 
+            ORDER BY r.ReservationTime ASC ";
             $result = $conn->query($sql);
 
 
@@ -114,7 +114,7 @@ if (!isset($_SESSION)) {
           
           
           <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-2">
+            <li class="list-group-item col-1">
 
               <div class="form-chec mt-3 ml-4">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="' . $row["ReservationID"] . '">
@@ -123,11 +123,13 @@ if (!isset($_SESSION)) {
  </label> 
 
 </li>
-                
-            <li class="list-group-item col-2">' . $row["CarID"] . '</li>
-            <li class="list-group-item col-4">' . $row["CustomerEmail"] . '</li>
+<li class="list-group-item col-2">' . $row["Model"] . '</li>
+            <li class="list-group-item col-1">' . $row["City"] . '</li>
+            <li class="list-group-item col-1">' . $row["CustomerName"] . '</li>
             <li class="list-group-item col-2">' . $row["Pickupday"] . '</li>
             <li class="list-group-item col-2">' . $row["Dropoffday"] . '</li>
+            <li class="list-group-item col-2">' . $row["ReservationTime"] . '</li>
+            <li class="list-group-item col-1">' . $row["Payment"] . '$</li>
             
             
           </ul>';
@@ -142,9 +144,7 @@ if (!isset($_SESSION)) {
 
           </div>
         </div>
-        <div class="col">
 
-        </div>
       </div>
     </div>
   </form>
@@ -172,9 +172,7 @@ if (!isset($_SESSION)) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
   </footer>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>

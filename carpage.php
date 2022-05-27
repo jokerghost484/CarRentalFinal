@@ -42,12 +42,16 @@ if (!isset($_SESSION)) {
 
     <?php
 
-
+    $modeilid = "";
     $kaan = FALSE;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
+        if($_SESSION["status"] == 0){
+            echo "<script> location.href='login.php'; </script>";
+        }
         if (isset($_POST['select'])) {
+            
             $kaan = TRUE;
             if ((isset($_POST["flexRadioDefault"]))) {
                 $modelid = $_POST['flexRadioDefault'];
@@ -61,27 +65,29 @@ if (!isset($_SESSION)) {
             $pick = $_SESSION["pickupday"];
             $drop = $_SESSION["dropoffday"];
             
-            
-            $sql = "SELECT CarID FROM cartable WHERE  ModelID = '$modelid' AND City = '$c' AND CarID NOT IN (SELECT r.CarID  From reservationtable r
-            WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  OR
-             DATE('$pick') BETWEEN r.Pickupday AND r.Dropoffday OR DATE('$drop') BETWEEN r.Pickupday AND r.Dropoffday
-
-           UNION 
-
-           SELECT a.CarID FROM carttable a
-           WHERE a.Pickupday 
-           BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') 
-           OR DATE('$pick') BETWEEN a.Pickupday AND a.Dropoffday OR DATE('$drop') BETWEEN a.Pickupday AND a.Dropoffday
+            if($kaan == TRUE){
+                $sql = "SELECT CarID FROM cartable WHERE  ModelID = '$modelid' AND City = '$c' AND CarID NOT IN (SELECT r.CarID  From reservationtable r
+                WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  OR
+                 DATE('$pick') BETWEEN r.Pickupday AND r.Dropoffday OR DATE('$drop') BETWEEN r.Pickupday AND r.Dropoffday
+    
+               UNION 
+    
+               SELECT a.CarID FROM carttable a
+               WHERE a.Pickupday 
+               BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') 
+               OR DATE('$pick') BETWEEN a.Pickupday AND a.Dropoffday OR DATE('$drop') BETWEEN a.Pickupday AND a.Dropoffday
+               
+                ) LIMIT 1 ";
+               
+               
+                $result = $conn->query($sql);
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                      $_SESSION["carid"] = $row["CarID"];
+                    }
+                  } 
+            }
            
-            ) LIMIT 1 ";
-           
-           
-            $result = $conn->query($sql);
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                  $_SESSION["carid"] = $row["CarID"];
-                }
-              } 
             
            
         }
@@ -110,6 +116,7 @@ if (!isset($_SESSION)) {
             } else
                 echo "<script> location.href='purchase.php'; </script>";
         }
+       
     }
 
     function test_input($data)

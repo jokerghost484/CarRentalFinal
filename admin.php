@@ -50,11 +50,17 @@
       <div class="col mt-5 " style="text-align: center;">
         <a class="btn btn-outline-secondary" href="addcar.php">Add Model</a>
       </div>
+      <div class="col mt-5 " style="text-align: center;">
+        <a class="btn btn-outline-secondary" href="updatemodel.php">Update Model</a>
+      </div>
       <div class="col mt-5" style="text-align: center;">
         <a class="btn btn-outline-secondary" href="deletecar.php">Delete Car</a>
       </div>
       <div class="col mt-5" style="text-align: center;">
         <a class="btn btn-outline-secondary" href="updatecar.php">Update Car</a>
+      </div>
+      <div class="col mt-5 " style="text-align: center;">
+        <a class="btn btn-outline-secondary" href="cars.php">List All Cars</a>
       </div>
       <div class="col mt-5" style="text-align: center;">
         <a class="btn btn-outline-secondary" href="cancel.php">Cancel Reservation</a>
@@ -72,15 +78,32 @@
       <div class="col-3 mt-5">
         <div class="card border-success mb-3" style="max-width: 18rem;">
           <div class="card-header">
-            <h5 class="card-title ">Income <span class="badge bg-info text-dark ml-3">Monthly</span></h5>
+            <h5 class="card-title ">Income <span class="badge bg-info text-dark ml-3">Total</span></h5>
 
           </div>
-          <div class="card-body text-dark">
-            <h2>80,967,544</h2>
-            <p class="card-text">Total Income <span style="float:right;">
+          <?php
+
+$sql = "SELECT SUM(Payment) AS Income FROM receipttable ";
+            $result = $conn->query($sql);
+
+
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+
+
+         echo '<div class="card-body text-dark">
+   
+
+            <h2>'.$row["Income"] .' $</h2>
+            
                
               </span></p>
-          </div>
+          </div>';
+        }
+      }
+?>
+
+
         </div>
       </div>
       <div class="col-3 mt-5">
@@ -115,7 +138,7 @@
       <div class="col-3 mt-5">
         <div class="card border-success mb-3" style="max-width: 18rem;">
           <div class="card-header">
-            <h5 class="card-title ">Visitors <span class="badge bg-info text-dark ml-3">Monthly</span></h5>
+            <h5 class="card-title ">Members <span class="badge bg-info text-dark ml-3">Total</span></h5>
 
           </div>
           <?php

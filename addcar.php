@@ -98,6 +98,19 @@
       $ima = test_input($_POST["ima"]);
     }
 
+    if($kaan == TRUE){
+      $sql = "SELECT * FROM carmodeltable ";
+      $result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+  
+  while($row = $result->fetch_assoc()) {
+    if($row["BranchName"] == $branchname && $row["CarName"] == $carname && $row["CarType"] == $type && $row["Fuel"] == $fuel && $row["CarSize"] == $size ){
+      $kaan = FALSE;
+    }
+  }
+} 
+    }
 
     if ($kaan == TRUE) {
       $stmt = $conn->prepare("INSERT INTO carmodeltable (BranchName,CarName,CarType,Fuel,CarSize,Price,CarImage)
@@ -176,6 +189,9 @@
               <option>Opel</option>
               <option>Peugeot</option>
               <option>Honda</option>
+              <option>Ford</option>
+              <option>Chevrolet</option>
+
               </select>
           </div>
           <div class="col-md-3" style="text-align: left;">
@@ -183,8 +199,15 @@
             <select  class="form-select" id="carname" name="carname"  value="<?php echo isset($_POST["carname"]) ? $_POST["carname"] : ''; ?>">
             <option selected>Choose...</option>
               <option>Astra</option>
+              <option>Corsa</option>
               <option>3008</option>
+              <option>206</option>
               <option>Civic</option>
+              <option>Jazz</option>
+              <option>Mustang</option>
+              <option>Fiesta</option>
+              <option>Camaro</option>
+              <option>Corvette</option>
               </select>
           </div>
           
@@ -225,9 +248,16 @@
             <label for="inputima" class="form-label mb-4">Image</label>
             <select id="ima" class="form-select" name="ima"  value="<?php echo isset($_POST["ima"]) ? $_POST["ima"] : ''; ?>">
               <option selected>Image...</option>
-              <option>honda.jpg</option>
-              <option>Small</option>
-              <option>Medium</option>
+              <option>astra.jpg</option>
+              <option>corsa.jpg</option>
+              <option>3008.jpg</option>
+              <option>206.jpg</option>
+              <option>civic.jpg</option>
+              <option>jazz.jpg</option>
+              <option>mustang.jpg</option>
+              <option>fiesta.jpg</option>
+              <option>camaro.jpg</option>
+              <option>corvette.jpg</option>
               
             </select>
           </div>

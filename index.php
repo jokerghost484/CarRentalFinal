@@ -44,7 +44,7 @@ if (!$conn) {
   die("Connection failed: " . mysqli_connect_error());
 }
 // define variables and set to empty values
-$pickup =  $dropoff = $pickupday = $dropoffday = "";
+$pickup =  $dropoff = $pickupday = $dropoffday = $rate = $date =  "";
 $pickupErr = $dropdownErr =   "";
 
 
@@ -60,7 +60,7 @@ $sql = "DELETE FROM carttable WHERE CustomerID = '$customerid' ";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $kaan = TRUE;
-
+  $ghost =FALSE;
   
   
   
@@ -104,12 +104,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if($pickupday > $dropoffday){
     $kaan=false;
   }
+  if($kaan == TRUE){
+    $sql = "SELECT  CURRENT_DATE AS CurrentDate";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      
+      while($row = $result->fetch_assoc()) {
+        $date = $row["CurrentDate"];
+      }
+    } 
+  }
+  if($date > $pickupday){
+    $kaan = FALSE;
+  }
+  
   else{
     $_SESSION["pickupday"] = $pickupday;
     $_SESSION["dropoffday"] = $dropoffday;
     $_SESSION["c"] = $pickup;
   }
+
+
  
+
+
+
 
   if ($kaan == TRUE) {
     echo "<script> location.href='carpage.php'; </script>";
@@ -127,6 +146,9 @@ function test_input($data)
 
 
 ?>
+
+
+
 
   <div class="container">
     <div class="row">
@@ -200,16 +222,22 @@ function test_input($data)
         <div class="card">
           <div class="card-body">
             <h5 class="card-title" style="text-align: center;">Our Trust</h5>
-            <p class="card-text">Currently of 537589 review of customers, %90 said we are the best .</p>
-            <div class=" star mt-5">
-              <i class="fa-solid fa-star fa-2xl" style="color: #FDCC0D"></i>
-              <i class="fa-solid fa-star fa-2xl" style="color: #FDCC0D"></i>
-              <i class="fa-solid fa-star fa-2xl" style="color: #FDCC0D"></i>
-              <i class="fa-solid fa-star fa-2xl" style="color: #FDCC0D"></i>
-              <i class="fa-solid fa-star-half-stroke fa-2xl" style="color: #FDCC0D"></i>
-            </div>
-
+            <?php 
+            $sql = "SELECT COUNT(CustomerID) AS Review,AVG(Rating) AS Rate FROM ratingtable";
+            $result = $conn->query($sql);
+            if ($result->num_rows > 0) {
+  while($row = $result->fetch_assoc()) {
+    echo' <p class="card-text">Our customers rated us '.$row["Review"].' times .</p>
+    <div class=" star mt-5">
+        '.$row["Rate"].'/5
+    </div>';
+  }
+} 
+         
+?>
             <a class="btn btn-outline-dark mt-5" href="services.php">Services</a>
+            <a class="btn btn-outline-dark mt-5" href="rateus.php">Rate Us</a>
+            
           </div>
         </div>
       </div>

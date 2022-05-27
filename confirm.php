@@ -106,7 +106,7 @@ if (!isset($_SESSION)) {
 
 
     if ($kaan == TRUE) {
-      $stmt = $conn->prepare("INSERT INTO receipttable (CustomerID,NameOnCard, CardNumber, Expiration, CVV,Payment)
+      $stmt = $conn->prepare("INSERT INTO receipttable (CustomerID,NameOnCard,CardNumber, Expiration, CVV,Payment)
        VALUES (?, ?, ?, ?,?,?)");
       $stmt->bind_param("issssi", $customeridadd,$nameoncard, $cardnumber, $expiration, $cvv,$payment);
 
@@ -143,7 +143,7 @@ if (!isset($_SESSION)) {
         }
       }
 
-      $sql = "INSERT INTO reservationtable (ReservationID,CustomerID,CarID,Pickupday,Dropoffday) VALUES ('$reservationidadd','$customeridadd','$caridadd','$pickupdayadd','$dropoffdayadd' )";
+      $sql = "INSERT INTO reservationtable (ReservationID,CustomerID,CarID,Pickupday,Dropoffday,Payment) VALUES ('$reservationidadd','$customeridadd','$caridadd','$pickupdayadd','$dropoffdayadd','$payment' )";
       if ($conn->query($sql) === TRUE) {
         $kaan = TRUE;
       } else {
