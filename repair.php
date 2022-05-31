@@ -46,10 +46,10 @@ if (!$conn) {
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $kaan = TRUE;
-    $ghost = TRUE;
     
-    // Activate Button
-    if (isset($_POST['activatecar'])) {
+    
+    if (isset($_POST['deletecar'])) {
+        
       
         $kaan = TRUE;
         if ((isset($_POST["flexRadioDefault"]))) {
@@ -61,60 +61,15 @@ if (!$conn) {
 
       }
         
-        $sql = "UPDATE cartable SET CarStatus = '1' WHERE CarID ='$carid'";
-        if ($conn->query($sql) === TRUE) {
-            if($kaan==TRUE){
-              echo "<script> location.href='selectedcars.php'; </script>";
-            }
-            
-          }
-          
+        $sql = "DELETE FROM cartable WHERE CarID ='$carid'";
     }
-   
+    if ($conn->query($sql) === TRUE) {
+        if($kaan==TRUE){
+          echo "<script> location.href='deletemodelscar.php'; </script>";
+        }
+        
+      }
     
-
-      //Deactivate Button
-      if (isset($_POST['deactivatecar'])) {
-      
-        $ghost = TRUE;
-        if ((isset($_POST["flexRadioDefault"]))) {
-          $carid = $_POST['flexRadioDefault'];
-          $ghost = TRUE;
-      }
-      else{
-        $ghost = FALSE;
-
-      }
-        
-        $sql = "UPDATE cartable SET CarStatus = '0' WHERE CarID ='$carid'";
-        if ($conn->query($sql) === TRUE) {
-            if($ghost==TRUE){
-              echo "<script> location.href='selectedcars.php'; </script>";
-            }
-            
-          }
-    }
-    if (isset($_POST['resercar'])) {
-      
-      $ghost = TRUE;
-      if ((isset($_POST["flexRadioDefault"]))) {
-        $carid = $_POST['flexRadioDefault'];
-        $_SESSION["carid"] = $carid;
-        $ghost = TRUE;
-    }
-    else{
-      $ghost = FALSE;
-
-    }
-      
-      
-      
-          if($ghost==TRUE){
-            echo "<script> location.href='selectedcarres.php'; </script>";
-          }
-          
-        
-  }
       
       
   }
@@ -137,24 +92,16 @@ if (!$conn) {
 
   <div class="container mt-5">
       <div class="row">
-        
+       
         <div class="col-12">
           <div class="card mt-5">
             <div class="card-header">
-              <?php 
-              $modelid = $_SESSION['modelid'];
-              $title = "SELECT CONCAT(BranchName, ' ', CarName) AS Model FROM carmodeltable WHERE ModelID = $modelid";
-              $res = $conn->query($title);
-              if ($res->num_rows > 0) {
-                while ($row = $res->fetch_assoc()) {
-              echo ' '.$row["Model"].' Cars  ';
-            }
-          }
-              ?>
+             Repairing Cars
             </div>
             <ul class="list-group list-group-horizontal">
-              <li class="list-group-item col-1">Option</li>
-              <li class="list-group-item col-2">CarNumber</li>
+            
+            <li class="list-group-item col-2">Model</li>
+              <li class="list-group-item col-1">CarNo</li>
               <li class="list-group-item col-2">Type</li>
               <li class="list-group-item col-2">Fuel</li>  
               <li class="list-group-item col-1">Size</li>
@@ -165,18 +112,14 @@ if (!$conn) {
             </ul>
             <?php
             $modelid = $_SESSION['modelid'];
-            
-              if($_SESSION["citycheck"] == 0){
-                $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,
-                c.CarStatus,c.City FROM cartable c,carmodeltable m WHERE m.ModelID ='$modelid'  AND m.ModelID = c.ModelID";
-              }
-              else if($_SESSION["citycheck"] == 1){
-                $city = $_SESSION["carcity"];
-                $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,
-                c.CarStatus,c.City FROM cartable c,carmodeltable m WHERE m.ModelID ='$modelid'  AND m.ModelID = c.ModelID AND c.City = '$city'";
-              }
+            $sql = "SELECT CONCAT(c.CarLetter, ' ', c.CarID) AS CarNumber,CONCAT(m.BranchName, ' ', m.CarName) 
+            AS Model,m.CarType,m.Fuel,m.CarSize,m.Price,c.CarID,c.ModelID,c.CarStatus,c.City FROM cartable c,carmodeltable m,repairctable r WHERE m.ModelID =c.ModelID AND c.CarID = r.CarID 
+            GROUP BY r.CarID";
 
             $result = $conn->query($sql);
+
+
+
 
 
             if ($result->num_rows > 0) {
@@ -188,24 +131,16 @@ if (!$conn) {
           
           
           <ul class="list-group list-group-horizontal">
-            <li class="list-group-item col-1">
-
-              <div class="form-chec mt-3 ml-4">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault" value="' . $row["CarID"] . '">
- <label class="form-check-label" for="flexRadioDefault">
-   
- </label> 
-
-</li>
+          
                 
-            <li class="list-group-item col-2">' . $row["CarNumber"] . '</li>
-            <li class="list-group-item col-2">' . $row["CarType"] . '</li>
-            <li class="list-group-item col-2">' . $row["Fuel"] . '</li>
-            <li class="list-group-item col-1">' . $row["CarSize"] . '</li>
-            <li class="list-group-item col-2">' . $row["City"] . '</li>
-            <li class="list-group-item col-1">' . $row["Price"] .'$</li>
-            <li class="list-group-item col-1">' . $row["CarStatus"] .'</li>
-            
+<li class="list-group-item col-2">' . $row["Model"] . '</li>
+<li class="list-group-item col-1">' . $row["CarNumber"] . '</li>
+<li class="list-group-item col-2">' . $row["CarType"] . '</li>
+<li class="list-group-item col-2">' . $row["Fuel"] . '</li>
+<li class="list-group-item col-1">' . $row["CarSize"] . '</li>
+<li class="list-group-item col-2">' . $row["City"] . '</li>
+<li class="list-group-item col-1">' . $row["Price"] .'$</li>
+<li class="list-group-item col-1">' . $row["CarStatus"] .'</li>
             
             
             
@@ -215,10 +150,9 @@ if (!$conn) {
 
 
             ?>
-            <div>
-            <input type="submit" class="btn btn-outline-danger col-3 " name="activatecar" value="Activate Car">
-            <input type="submit" class="btn btn-outline-danger col-3" name="resercar" value="Check Reservations">
-            <input type="submit" class="btn btn-outline-danger col-3 " name="deactivatecar" value="Deactivate Car">
+            <div class="Cancel-button mx-auto pt-2 pb-2">
+            
+              
             </div>
 
           </div>

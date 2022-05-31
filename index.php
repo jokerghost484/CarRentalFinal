@@ -103,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if($pickupday > $dropoffday){
     $kaan=false;
+    echo "<script> alert('DropOffDay must be later than PickUpDay'); </script>";
   }
   if($kaan == TRUE){
     $sql = "SELECT  CURRENT_DATE AS CurrentDate";
@@ -115,6 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } 
   }
   if($date > $pickupday){
+    echo "<script> alert('Please pick a valid day '); </script>";
     $kaan = FALSE;
   }
   

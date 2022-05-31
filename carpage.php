@@ -66,7 +66,7 @@ if (!isset($_SESSION)) {
             $drop = $_SESSION["dropoffday"];
             
             if($kaan == TRUE){
-                $sql = "SELECT CarID FROM cartable WHERE  ModelID = '$modelid' AND City = '$c' AND CarID NOT IN (SELECT r.CarID  From reservationtable r
+                $sql = "SELECT CarID FROM cartable WHERE  ModelID = '$modelid' AND City = '$c' AND CarStatus = '1' AND CarID NOT IN (SELECT r.CarID  From reservationtable r
                 WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  OR
                  DATE('$pick') BETWEEN r.Pickupday AND r.Dropoffday OR DATE('$drop') BETWEEN r.Pickupday AND r.Dropoffday
     
@@ -143,7 +143,18 @@ $c = $_SESSION["c"];
 
 
 //$sql = "SELECT * FROM cartable WHERE CarID NOT IN (SELECT CarID From reservationtable WHERE Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  ) ";
-$sql = "SELECT DISTINCT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price,m.CarImage FROM cartable c,carmodeltable m WHERE c.City = '$c' AND c.ModelID = m.ModelID AND c.CarID NOT IN (SELECT r.CarID OR a.CarID From reservationtable r,carttable a WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') )  ";
+$sql = "SELECT DISTINCT m.BranchName,m.CarName,m.ModelID,m.CarType,m.Fuel,m.CarSize,m.Price,m.CarImage,c.CarStatus FROM cartable c,carmodeltable m WHERE 
+c.City = '$c' AND c.ModelID = m.ModelID AND c.CarStatus = '1' AND c.CarID NOT IN (SELECT r.CarID  From reservationtable r
+                WHERE r.Pickupday BETWEEN DATE('$pick') AND DATE('$drop') OR r.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop')  OR
+                 DATE('$pick') BETWEEN r.Pickupday AND r.Dropoffday OR DATE('$drop') BETWEEN r.Pickupday AND r.Dropoffday
+    
+               UNION 
+    
+               SELECT a.CarID FROM carttable a
+               WHERE a.Pickupday 
+               BETWEEN DATE('$pick') AND DATE('$drop') OR a.Dropoffday BETWEEN DATE('$pick') AND DATE('$drop') 
+               OR DATE('$pick') BETWEEN a.Pickupday AND a.Dropoffday OR DATE('$drop') BETWEEN a.Pickupday AND a.Dropoffday
+               )  ";
 $result = $conn->query($sql);
 
 

@@ -83,7 +83,7 @@
           </div>
           <?php
 
-$sql = "SELECT SUM(Payment) AS Income FROM receipttable ";
+$sql = "SELECT SUM(Payment) AS Income FROM reservationtable ";
             $result = $conn->query($sql);
 
 
@@ -191,6 +191,32 @@ $sql = "SELECT SUM(Payment) AS Income FROM receipttable ";
           
         </div>
       </div>
+
+      <div class="container">
+    <div class="row">
+
+
+
+      <div class="col mt-5 " style="text-align: center;">
+        <a class="btn btn-outline-secondary" href="customers.php">List Customers</a>
+      </div>
+      <div class="col mt-5 " style="text-align: center;">
+        <a class="btn btn-outline-secondary" href="disabledcars.php">Disabled Cars</a>
+      </div>
+      <div class="col mt-5 " style="text-align: center;">
+        <a class="btn btn-outline-secondary" href="repair.php">Status Repair</a>
+      </div>
+      <div class="col mt-5 " style="text-align: center;">
+        <a class="btn btn-outline-secondary" href="listrentals.php">Car Rentals</a>
+      </div>
+      
+
+     
+
+
+    </div>
+  </div>
+      
 
 
 
